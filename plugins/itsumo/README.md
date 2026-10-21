@@ -13,10 +13,11 @@ claude plugin install itsumo@itsumo
 
 ## スキル
 
-`/itsumo:<名前>` で呼べる。説明文に合う場面では Claude が自分で使う。
+`/itsumo:<名前>` で呼べる。説明文に合う場面では Claude が自分で使う（`setting-up-project` だけは手動専用）。
 
 | スキル | 何をするか |
 |---|---|
+| `setting-up-project` | 初回のセットアップ（手動で実行）。既存のコードと文書を調べ、AGENTS.md（無いとき）と、プロジェクト固有の rules / skills を作る。AGENTS.md が既にあれば変えず、変更を提案する。空のプロジェクトでは質問から最小の AGENTS.md を作る |
 | `committing-changes` | 自分の変更だけをステージし、要点が先に来る短いメッセージでコミットする |
 | `running-regression-tests` | 変更に合わせてテストを足す・直す・消し、影響する範囲のテストだけを走らせる。完了と言う前に実行して確かめ、成功・失敗・未実行を分けて報告する |
 | `clarifying-requests` | 曖昧な依頼は、選択肢と推奨を添えて聞く。自由記述の回答がまだ曖昧なら、決まるまで深掘りして聞き直す |

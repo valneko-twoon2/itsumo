@@ -62,6 +62,7 @@ claude plugin eval . --eval-dir eval-suite/evals --ablation none --no-publish --
 - 1 ケースだけ試すには `--case <名前> --runs 1`（`--case` は 1 つだけ。複数指定すると最後のものだけが使われる）。モデルは `--model haiku|sonnet|opus` で変える。Haiku・Sonnet・Opus のどれでも確かめる。
 - 全 17 ケースで、Sonnet は約 $1、Opus は約 $2、Haiku は数セント（1 回ずつ）。
 - 呼ばれるケースの依頼は、実在しないファイルを「直して」と頼む形にしない（Claude が「ファイルが無い」と答えてスキルを呼ばない）。「これから〜する。進め方を教えて」の形にする。
+- 手動専用のスキル（`setting-up-project` のように `disable-model-invocation: true`）は、呼ばれるケースを評価に置けない。代わりに、サンプルのプロジェクトを作って `claude -p --plugin-dir plugins/itsumo "/itsumo:<名前>"` で実際に走らせて確かめる（`.claude/` への書き込みは `-p` では許可されないので、書き込む直前までの動きを見る）。
 - Windows では Bash を許可するケースは動かせない。ケースの `allowed_tools` は `Read, Glob, Grep, Skill` に限る。
 - 直近の結果: Sonnet と Opus は全件通る。Haiku（`claude-haiku-5-5`）は、開始時にスキルの案内を差し込む（`hooks/skill-guide.mjs`）ようにして、17 ケース中 15 で 3 回とも通る。残りは `reviewing-security-boundaries`（3 回中 1 回呼ばない）と `writing-pr-descriptions`（スキルは呼ぶが、回答の質の採点が落ちる）。
 - スキルを足したら `lib/skill-guide.md` に依頼の言い回しとの対応を足す（足し忘れはテストが落ちる）。

@@ -14,5 +14,6 @@ itsumo のスキル。依頼が次のどれかに当たるときは、作業を�
 - PR を作る、PR の説明を書く: itsumo:writing-pr-descriptions
 - 並行作業のためのワークツリー: itsumo:managing-worktrees
 - サブエージェントの成果を取り込む: itsumo:merging-subagent-work
+- 初回のセットアップ（ユーザーが手動で実行するもの。自分からは呼ばない）: itsumo:setting-up-project
 
 プロジェクトの決まり（AGENTS.md、CLAUDE.md）がスキルと食い違うときは、プロジェクトの決まりが正。
