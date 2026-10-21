@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-D97757)](https://code.claude.com/docs)
 [![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A5%2018-339933?logo=node.js&logoColor=white)](https://nodejs.org)
-[![Skills](https://img.shields.io/badge/skills-11-blue)](#スキル)
+[![Skills](https://img.shields.io/badge/skills-12-blue)](#スキル)
 [![Hooks](https://img.shields.io/badge/hooks-6-blue)](#フック)
 
 [インストール](#インストール) ・
@@ -61,6 +61,7 @@ claude plugin install itsumo@itsumo
 | `clarifying-requests` | 「いい感じにして」のような曖昧な依頼 | 選択肢と推奨を添えて聞く。自由記述の回答がまだ曖昧なら、決まるまで深掘りする |
 | `making-minimal-changes` | 既存のコードを直す・変える | 依頼に必要な最小の差分だけを入れる。ついでの整形・改名・リファクタをせず、気づいた別件は報告する |
 | `following-existing-code` | 新しくコードを書く | 同じ役割の既存コードを先に読み、命名・構造・エラー処理・テスト・使う道具を合わせる |
+| `refactoring-safely` | リファクタを頼まれた | 先にテストで振る舞いを固め、小さな段階ごとにテストを通してコミットする。機能の変更と混ぜない |
 | `investigating-bugs` | 不具合の原因を調べる | 再現し、仮説を証拠で絞って、原因を確定してから直す |
 | `running-regression-tests` | テストの扱い、完了の報告 | テストを足す・直す・消し、影響する範囲だけを走らせる。完了と言う前に実行して確かめ、成功・失敗・未実行を分けて報告する |
 | `designing-test-cases` | テストケースを選ぶ | 同値分割、境界値、条件網羅、プロパティ、状態遷移、デシジョンテーブル、ペアワイズ |
