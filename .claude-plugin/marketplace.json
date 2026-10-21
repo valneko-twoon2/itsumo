@@ -7,7 +7,7 @@
   "plugins": [
     {
       "name": "itsumo",
-      "source": "./",
+      "source": "./plugins/itsumo",
       "description": "いつもの定型作業（コミット、テスト、文書、ワークツリー、サブエージェント受け入れ）をまとめたプラグイン"
     }
   ]

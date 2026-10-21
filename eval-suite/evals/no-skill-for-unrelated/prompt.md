@@ -1,6 +1,6 @@
 ---
 description: "no-skill-for-unrelated"
-plugins: ["../../.."]
+plugins: ["../../../plugins/itsumo"]
 runs: 2
 max_turns: 8
 timeout_seconds: 240
