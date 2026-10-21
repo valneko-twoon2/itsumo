@@ -1,15 +1,17 @@
 ---
 name: setting-up-project
-description: "プロジェクトの初回セットアップ。既存のソースコードと文書を調べ、そのプロジェクトに合う AGENTS.md、.claude/rules/、.claude/skills/ を作る。AGENTS.md が既にあるときは変えず、既存の規則とスキルの変更を提案する。空のプロジェクトでは、質問から最小の AGENTS.md を作る。手動で /itsumo:setting-up-project と実行したときだけ使う。"
+description: "プロジェクトの初回セットアップ。既存のソースコードと文書を調べ、そのプロジェクトに合う指示ファイル（AGENTS.md か CLAUDE.md）、.claude/rules/、.claude/skills/ を作る。指示ファイルが既にあるときは変えず、既存の規則とスキルの変更を提案する。空のプロジェクトでは、質問から最小の指示ファイルを作る。手動で /itsumo:setting-up-project と実行したときだけ使う。"
 argument-hint: "[省略 | 調べる範囲やフォルダ]"
 disable-model-invocation: true
 ---
 
-プロジェクトに合わせて、Claude の作業の土台（`AGENTS.md`、`.claude/rules/`、`.claude/skills/`）を作る。**調べて分かったことだけを書く。** 推測で決まりを作らない。
+プロジェクトに合わせて、Claude の作業の土台（指示ファイル、`.claude/rules/`、`.claude/skills/`）を作る。**調べて分かったことだけを書く。** 推測で決まりを作らない。
+
+**指示ファイル**とは、`AGENTS.md` か `CLAUDE.md` のこと。Claude Code が読むのは `CLAUDE.md`。`AGENTS.md` は、複数のツールが読む共通の形式。両方を使うプロジェクトでは、`CLAUDE.md` に `@AGENTS.md` と書いて取り込み、本文を `AGENTS.md` に 1 つだけ置くのが定番。
 
 ## 1. 守ること
 
-- 既存の `AGENTS.md` と `CLAUDE.md` は**変えない**。直したい点は、提案として示す。
+- 既存の指示ファイル（`AGENTS.md` と `CLAUDE.md`）は**変えない**。直したい点は、提案として示す。
 - 既存の `.claude/rules/` と `.claude/skills/` のファイルは**上書きしない**。変更案を示す。
 - 書き込む前に、作るファイルの一覧と中身の要点を見せて、ユーザーの了承を得る。
 - 書いた内容の根拠（どのファイルを見て分かったか）を、報告に添える。
@@ -21,7 +23,7 @@ disable-model-invocation: true
 
 ```
 - [ ] 1. 新規か既存かを判定した
-- [ ] 2. 既存の AGENTS.md、CLAUDE.md、.claude/ を読んだ
+- [ ] 2. 既存の指示ファイル（AGENTS.md、CLAUDE.md）と .claude/ を読んだ
 - [ ] 3. プロジェクトを調べた（references/survey.md）
 - [ ] 4. 作る・提案するものの候補を示し、了承を得た
 - [ ] 5. 書いた。コマンドは実際に走らせて確かめた
@@ -38,10 +40,17 @@ disable-model-invocation: true
 
 `AGENTS.md`、`CLAUDE.md`、`.claude/rules/`、`.claude/skills/`、`.claude/settings.json`、`CONTRIBUTING.md` を探して読む。どれがあるかで、3 章以降の動きが変わる。
 
-| 状態 | AGENTS.md | rules / skills |
+| 状態 | 指示ファイル | rules / skills |
 |---|---|---|
-| AGENTS.md も CLAUDE.md も無い | **作る** | 候補を作る |
-| どちらかがある | **変えない**。改善点を提案する | 既存は変えず、変更案と新しい候補を示す |
+| どちらも無い | **作る**（下の注を参照） | 候補を作る |
+| `AGENTS.md` だけ | **変えない**。改善点を提案する。Claude Code 向けの `CLAUDE.md`（`@AGENTS.md` の 1 行）が無ければ、作るかを聞く | 既存は変えず、変更案と新しい候補を示す |
+| `CLAUDE.md` だけ | **変えない**。改善点を提案する。`AGENTS.md` は作らない（他のツールも使うなら、必要かを聞く） | 同上 |
+| 両方ある | **変えない**。`CLAUDE.md` が `@AGENTS.md` を取り込んでいるかを確かめる。取り込んでいなければ、二重に書かれている内容を提案で挙げる | 同上 |
+
+どちらも無いときは、どのツールで使うかを聞く（4 章の質問に含める）。
+
+- Claude Code だけ: `CLAUDE.md` だけを作る。
+- 他のツールも使う、または分からない（推奨）: 本文を `AGENTS.md` に書き、`CLAUDE.md` には `@AGENTS.md` の 1 行を置く。どちらのツールからも同じ内容が読まれる。
 
 ### 3. 調べる
 
@@ -53,7 +62,7 @@ disable-model-invocation: true
 
 | 種類 | 向いているもの |
 |---|---|
-| AGENTS.md | プロジェクトの概要、構成、コマンド、守る決まり。コードを読んでも分からないことだけ |
+| 指示ファイル | プロジェクトの概要、構成、コマンド、守る決まり。コードを読んでも分からないことだけ |
 | rules（`.claude/rules/*.md`） | 特定の場所にだけ効く決まり（例: `src/api/` の書き方）。`paths:` でその場所を指定する |
 | skills（`.claude/skills/<名前>/`） | このプロジェクトで繰り返す手順（例: 新しい API を足す、リリースする） |
 
@@ -63,7 +72,7 @@ disable-model-invocation: true
 
 形式とひな形は [references/templates.md](references/templates.md)。
 
-- AGENTS.md は短く保つ。**書いたコマンドは実際に走らせて確かめる**（走らせられないものは「未確認」と書く）。
+- 指示ファイルは短く保つ。**書いたコマンドは実際に走らせて確かめる**（走らせられないものは「未確認」と書く）。
 - スキルと規則の本文は、itsumo のスキルと同じ水準（簡潔、具体、プロジェクト固有）で書く。
 - `.claude/itsumo.json` に効く設定（`worktree.link` に `node_modules`、`stop.ignore` に生成物のフォルダなど）が分かれば、提案する。
 
