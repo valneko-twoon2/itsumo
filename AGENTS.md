@@ -1,22 +1,22 @@
 # AGENTS.md
 
-このリポジトリは、Claude Code プラグイン `itsumo` の配布元。中身は `plugins/itsumo/`（スキル、フック、共有スクリプト）で、インストール時にコピーされるのもここだけ。使い方は `plugins/itsumo/README.md`。
+このリポジトリは、Claude Code プラグイン `itsumo` の配布元。リポジトリの直下がそのままプラグイン（スキル、フック、共有スクリプト）で、マーケットプレイスの `source` も直下（`./`）を指す。使い方は `README.md`。
 
 ## 構成
 
 | 場所 | 中身 |
 |---|---|
 | `.claude-plugin/marketplace.json` | マーケットプレイスの定義 |
-| `plugins/itsumo/` | プラグイン本体。ここに置いたものは利用者に配られる |
-| `README.md` | リポジトリの入口（概要、インストール、スキルとフックの一覧）。詳細は `plugins/itsumo/README.md` |
+| `skills/` `hooks/` `lib/` `.claude-plugin/plugin.json` | プラグイン本体 |
+| `README.md` | リポジトリの入口（概要、インストール、スキルとフックの一覧、設定） |
 | `CHANGELOG.md` | 変更履歴（Keep a Changelog 形式、日本語） |
-| `LICENSE` | MIT。プラグイン配布物用に `plugins/itsumo/LICENSE` にも同じものを置く |
-| `tests/` | `lib/` と `hooks/` のユニットテスト。**プラグインの外に置く**（中に置くと配布物に入る） |
-| `eval-suite/evals/` | スキルの評価ケース（`claude plugin eval` 用）。**プラグインの外に置く**。結果の `results/` は Git の対象外 |
+| `LICENSE` | MIT |
+| `tests/` | `lib/` と `hooks/` のユニットテスト |
+| `eval-suite/evals/` | スキルの評価ケース（`claude plugin eval` 用）。結果の `results/` は Git の対象外 |
 
 文書（`README.md`、`CHANGELOG.md`、スキルの本文など）に絵文字を使わない。
 
-## plugins を修正するとき
+## プラグインを修正するとき
 
 スキルの書き方は、公式のベストプラクティスを参考にする: https://platform.claude.com/docs/ja/agents-and-tools/agent-skills/best-practices
 
@@ -37,7 +37,6 @@
 
 ```sh
 node --test tests/lib.test.mjs
-claude plugin validate plugins/itsumo --strict
 claude plugin validate . --strict
 ```
 
@@ -47,12 +46,11 @@ claude plugin validate . --strict
 
 - **利用者に見える変更（スキル・フック・設定・挙動の追加や変更、削除）をしたら、同じコミットで `CHANGELOG.md` に書く。** 書き先は、ユーザーが「リリースしてよい」と言うまでは **最新のバージョン（今は `[0.1.0]`）の節**。「未リリース」の節は作らず、バージョンも上げない。内部だけの変更（テスト、AGENTS.md、評価ケースなど）は書かなくてよい。
 - 見出しは「追加」「変更」「修正」「削除」。1 項目 1 行、日本語、利用者の目線で書く。
-- ユーザーがリリースを指示したときだけ、次のバージョンの節を作り、`plugins/itsumo/.claude-plugin/plugin.json` の `version` を合わせる。
-- `LICENSE` を変えたら、ルートと `plugins/itsumo/LICENSE` の両方を同じにする。
+- ユーザーがリリースを指示したときだけ、次のバージョンの節を作り、`.claude-plugin/plugin.json` の `version` を合わせる。
 
 ## 評価（eval）
 
-スキルが場面に合わせて呼ばれるか、回答が期待を満たすかを `claude plugin eval` で確かめる。ケースは `eval-suite/evals/<ケース名>/` に置く（`prompt.md` と `graders/*.md`）。各ケースの `plugins` で `plugins/itsumo` を指す。
+スキルが場面に合わせて呼ばれるか、回答が期待を満たすかを `claude plugin eval` で確かめる。ケースは `eval-suite/evals/<ケース名>/` に置く（`prompt.md` と `graders/*.md`）。各ケースの `plugins` で、リポジトリの直下（`../../..`）を指す。
 
 ```sh
 claude plugin eval . --eval-dir eval-suite/evals --ablation none --no-publish --trust-plugin -j 4 --max-cost-usd 5
@@ -62,7 +60,7 @@ claude plugin eval . --eval-dir eval-suite/evals --ablation none --no-publish --
 - 1 ケースだけ試すには `--case <名前> --runs 1`（`--case` は 1 つだけ。複数指定すると最後のものだけが使われる）。モデルは `--model haiku|sonnet|opus` で変える。Haiku・Sonnet・Opus のどれでも確かめる。
 - 全 17 ケースで、Sonnet は約 $1、Opus は約 $2、Haiku は数セント（1 回ずつ）。
 - 呼ばれるケースの依頼は、実在しないファイルを「直して」と頼む形にしない（Claude が「ファイルが無い」と答えてスキルを呼ばない）。「これから〜する。進め方を教えて」の形にする。
-- 手動専用のスキル（`setting-up-project` のように `disable-model-invocation: true`）は、呼ばれるケースを評価に置けない。代わりに、サンプルのプロジェクトを作って `claude -p --plugin-dir plugins/itsumo "/itsumo:<名前>"` で実際に走らせて確かめる（`.claude/` への書き込みは `-p` では許可されないので、書き込む直前までの動きを見る）。
+- 手動専用のスキル（`setting-up-project` のように `disable-model-invocation: true`）は、呼ばれるケースを評価に置けない。代わりに、サンプルのプロジェクトを作って `claude -p --plugin-dir . "/itsumo:<名前>"` で実際に走らせて確かめる（`.claude/` への書き込みは `-p` では許可されないので、書き込む直前までの動きを見る）。
 - Windows では Bash を許可するケースは動かせない。ケースの `allowed_tools` は `Read, Glob, Grep, Skill` に限る。
 - 直近の結果: Sonnet と Opus は全件通る。Haiku（`claude-haiku-5-5`）は、開始時にスキルの案内を差し込む（`hooks/skill-guide.mjs`）ようにして、17 ケース中 15 で 3 回とも通る。残りは `reviewing-security-boundaries`（3 回中 1 回呼ばない）と `writing-pr-descriptions`（スキルは呼ぶが、回答の質の採点が落ちる）。
 - スキルを足したら `lib/skill-guide.md` に依頼の言い回しとの対応を足す（足し忘れはテストが落ちる）。
@@ -79,4 +77,4 @@ claude plugin eval . --eval-dir eval-suite/evals --ablation none --no-publish --
 - 本文が要るときだけ、空行を挟んで最大 8 行の箇条書き（`- ` で始め、1 行 100 文字以内）。
 - **`Co-Authored-By:` の行は付けない。** PR の説明にも「Generated with Claude Code」を付けない。
 - 自分が変えたファイルだけをステージする。`.env*`、キー、生成物はコミットしない。
-- 詳しい形は `plugins/itsumo/skills/committing-changes/SKILL.md`。
+- 詳しい形は `skills/committing-changes/SKILL.md`。

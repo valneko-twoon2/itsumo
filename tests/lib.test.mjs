@@ -1,10 +1,10 @@
-// node --test plugins/itsumo/tests で走る。
+// node --test tests/lib.test.mjs で走る。
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { loadConfig } from '../plugins/itsumo/lib/config.mjs';
-import { badEol, eolFromAttr, eolFromCheckAttr, withEol } from '../plugins/itsumo/lib/eol.mjs';
-import { finished, isLarge, parseNumstat, parseWorktrees, pending, rootHolding } from '../plugins/itsumo/lib/git.mjs';
-import { reminder } from '../plugins/itsumo/hooks/stop.mjs';
+import { loadConfig } from '../lib/config.mjs';
+import { badEol, eolFromAttr, eolFromCheckAttr, withEol } from '../lib/eol.mjs';
+import { finished, isLarge, parseNumstat, parseWorktrees, pending, rootHolding } from '../lib/git.mjs';
+import { reminder } from '../hooks/stop.mjs';
 
 test('eol 属性が無いファイルには改行を求めない', () => {
   assert.equal(eolFromAttr('text=auto eol=lf'), 'lf');
@@ -98,14 +98,14 @@ test('設定は既定値に重なり、ITSUMO_DISABLE で止められる', () =>
 });
 
 test('changedSince: 開始時と内容が同じものは除き、記録が無ければすべて', async () => {
-  const { changedSince } = await import('../plugins/itsumo/lib/snapshot.mjs');
+  const { changedSince } = await import('../lib/snapshot.mjs');
   const before = { 'a.ts': 'h1', 'b.ts': 'h2' };
   assert.deepEqual(changedSince(before, { 'a.ts': 'h1', 'b.ts': 'h9', 'c.ts': 'h3' }), ['b.ts', 'c.ts']);
   assert.deepEqual(changedSince(null, { 'a.ts': 'h1' }), ['a.ts']);
 });
 
 test('署名行を含む commit / PR の作成だけを止める', async () => {
-  const { hasSignature } = await import('../plugins/itsumo/hooks/no-attribution.mjs');
+  const { hasSignature } = await import('../hooks/no-attribution.mjs');
   assert.equal(hasSignature('git commit -m "x\n\nCo-Authored-By: Claude Opus <noreply@anthropic.com>"'), true);
   assert.equal(hasSignature('gh pr create --body "Generated with [Claude Code](https://claude.com/claude-code)"'), true);
   assert.equal(hasSignature('git commit -m "Add x"'), false);
@@ -114,19 +114,19 @@ test('署名行を含む commit / PR の作成だけを止める', async () => {
 
 test('スキルの案内は全スキルを挙げ、開始のイベントにだけ差し込み、設定で止められる', async () => {
   const { readdirSync } = await import('node:fs');
-  const { contextFor } = await import('../plugins/itsumo/hooks/skill-guide.mjs');
+  const { contextFor } = await import('../hooks/skill-guide.mjs');
   const on = loadConfig('/no/such/dir', {});
   const answer = contextFor('SessionStart', on);
   const text = answer.hookSpecificOutput.additionalContext;
   assert.equal(answer.hookSpecificOutput.hookEventName, 'SessionStart');
-  for (const name of readdirSync(new URL('../plugins/itsumo/skills', import.meta.url))) assert.ok(text.includes(`itsumo:${name}`), `案内に無いスキル: ${name}`);
+  for (const name of readdirSync(new URL('../skills', import.meta.url))) assert.ok(text.includes(`itsumo:${name}`), `案内に無いスキル: ${name}`);
   assert.equal(contextFor('SubagentStart', on).hookSpecificOutput.hookEventName, 'SubagentStart');
   assert.equal(contextFor('PreToolUse', on), null);
   assert.equal(contextFor('SessionStart', loadConfig('/no/such/dir', { ITSUMO_DISABLE: 'guide' })), null);
 });
 
 test('取り返しのつかないコマンドだけを確認に回し、生成物のフォルダの削除は通す', async () => {
-  const { destructiveReason } = await import('../plugins/itsumo/hooks/confirm-destructive.mjs');
+  const { destructiveReason } = await import('../hooks/confirm-destructive.mjs');
   const safe = loadConfig('/no/such/dir', {}).destructive.safeDirs;
   const asks = (c) => assert.ok(destructiveReason(c, safe), `確認されるべき: ${c}`);
   const passes = (c) => assert.equal(destructiveReason(c, safe), null, `通るべき: ${c}`);

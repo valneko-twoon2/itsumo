@@ -88,34 +88,56 @@ claude plugin install itsumo@itsumo
 > [!NOTE]
 > セッションの前からあった、あなた自身の未コミットの変更には催促しない（開始時に記録して、差分だけを見る）。
 
+## スクリプト
+
+スキルとフックが使う。直接も呼べる（`<プラグインのフォルダ>` はインストール先）。
+
+- `node <プラグインのフォルダ>/lib/worktree.mjs add <name> | remove <path> [--force] | list`
+- `node <プラグインのフォルダ>/lib/fix-eol.mjs <path>... | --check [<path>...]`
+
 ## 設定
 
-何も設定しなくても動く。変えたいときは、プロジェクトの `.claude/itsumo.json` に書く（すべて省略可）。
+プロジェクトの `.claude/itsumo.json`（すべて省略可。下は既定値）:
 
 ```json
 {
+  "eol": true,
+  "guide": true,
   "attribution": false,
+  "destructive": {
+    "confirm": true,
+    "safeDirs": ["node_modules", "dist", "build", "target", "coverage", "test-results", ".next", ".turbo", ".cache", "__pycache__", ".pytest_cache"]
+  },
   "stop": {
     "commit": true,
+    "worktrees": true,
+    "ignore": ["node_modules/", "dist/", "build/", "target/", "coverage/", "test-results/"],
     "largeDiff": { "files": 10, "lines": 400 }
   },
-  "worktree": { "link": ["node_modules"] }
+  "worktree": { "link": [], "base": null }
 }
 ```
 
-一時的に止めるなら、環境変数 `ITSUMO_DISABLE=guide,eol,stop,destructive`。
+- `guide: false` でスキルの案内の差し込みを止める。
+- `attribution: true` で署名行を許す（既定は止める）。
+- `destructive.confirm: false` で、取り返しのつかないコマンドの確認を止める。
+- `stop.commit: false` でコミットの催促を止める。
+- `worktree.link` に `"node_modules"` などを入れると、新しいワークツリーへメインからリンクする（Windows はジャンクション）。
+- 一時的に止めるなら環境変数 `ITSUMO_DISABLE=guide,eol,stop,destructive`（カンマ区切り）。
 
-全項目、スクリプト、署名行の扱いは [plugins/itsumo/README.md](plugins/itsumo/README.md)。
+## 署名行（attribution）
+
+Claude Code が自動で足す `Co-Authored-By: Claude ...`（コミット）と `Generated with Claude Code`（PR）は、プラグインの `settings.json` では消せない。代わりに PreToolUse フックで、署名行を含む `git commit` / `gh pr create` を止めている。設定で消したいなら、プロジェクトかユーザーの `settings.json` に `{ "attribution": { "commit": "", "pr": "" } }` を書く。
 
 ## 構成
 
 ```
 .
 ├── .claude-plugin/marketplace.json   マーケットプレイスの定義
-├── plugins/itsumo/                   プラグイン本体（配布されるのはここだけ）
-│   ├── skills/                       スキル
-│   ├── hooks/                        フック
-│   └── lib/                          フックとスクリプトの共有コード
+├── skills/                           スキル
+├── hooks/                            フック
+├── lib/                              フックとスクリプトの共有コード
+├── .claude-plugin/plugin.json        プラグインの定義
 ├── tests/                            ユニットテスト
 └── eval-suite/evals/                 スキルの評価ケース
 ```
@@ -124,8 +146,7 @@ claude plugin install itsumo@itsumo
 
 ```sh
 node --test tests/lib.test.mjs                 # ユニットテスト
-claude plugin validate plugins/itsumo --strict # プラグインの検証
-claude plugin validate . --strict              # マーケットプレイスの検証
+claude plugin validate . --strict              # プラグインとマーケットプレイスの検証
 ```
 
 スキルが場面に合わせて呼ばれるかの評価:

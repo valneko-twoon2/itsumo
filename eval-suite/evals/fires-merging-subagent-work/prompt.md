@@ -1,6 +1,6 @@
 ---
 description: "fires-merging-subagent-work"
-plugins: ["../../../plugins/itsumo"]
+plugins: ["../../.."]
 runs: 2
 max_turns: 8
 timeout_seconds: 240
