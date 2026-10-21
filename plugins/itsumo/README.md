@@ -19,8 +19,10 @@ claude plugin install itsumo@itsumo
 |---|---|
 | `committing-changes` | 自分の変更だけをステージし、要点が先に来る短いメッセージでコミットする |
 | `running-regression-tests` | 変更に合わせてテストを足す・直す・消し、影響する範囲のテストだけを走らせ、成功・失敗・未実行を分けて報告する |
+| `making-minimal-changes` | 既存のコードを直すとき、依頼に必要な最小の差分だけを入れる（ついでの整形・改名・リファクタをせず、気づいた別件は報告する） |
+| `following-existing-code` | 新しくコードを書く前に同じ役割の既存コードを読み、命名・構造・エラー処理・テスト・使う道具をそれに合わせる |
 | `designing-test-cases` | テストケースの選び方（同値分割、境界値、条件網羅、プロパティ、状態遷移表、デシジョンテーブル、ペアワイズ） |
-| `reviewing-security-boundaries` | 境界（API、URL、ファイルパス、プロセス起動、外部データ、秘密情報、DB、依存）を変えるときの確認表 |
+| `reviewing-security-boundaries` | 境界（API、URL、ファイルパス、プロセス起動、外部データ、秘密情報、DB、依存）を変えるときの確認表。Web 用とデスクトップ用の表を分けて持つ |
 | `managing-worktrees` | メインに触れずに作業する Git ワークツリーを作り、リンクを先に外して安全に消す |
 | `merging-subagent-work` | サブエージェントのブランチを、報告と差分の突き合わせ・決まりの確認・マージ後の再チェック・片付けを経て取り込む |
 
