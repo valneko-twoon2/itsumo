@@ -36,6 +36,7 @@ claude plugin install itsumo@itsumo
 
 | いつ | 何をするか |
 |---|---|
+| SessionStart / SubagentStart | 依頼の言い回しとスキルの対応の短い案内（`lib/skill-guide.md`）を最初に差し込む。スキルを呼ばずに自力で答えてしまうのを減らす。組み込みの Explore や Plan にも届く |
 | Write / Edit の後 | 編集したファイルの改行を `.gitattributes` の `eol=` に合わせる。eol 属性の無いファイルには触らない |
 | SessionStart | 開始時の未コミットのファイルと内容を記録する（Stop で、セッション前からあったユーザーの変更を催促しないため） |
 | PreToolUse（Bash / PowerShell） | `git commit` と `gh pr create/edit` に Claude の署名行（Co-Authored-By、Generated with Claude Code）が入っていたら実行前に止め、外して出し直させる |
@@ -58,6 +59,7 @@ claude plugin install itsumo@itsumo
 ```json
 {
   "eol": true,
+  "guide": true,
   "attribution": false,
   "destructive": {
     "confirm": true,
@@ -73,11 +75,12 @@ claude plugin install itsumo@itsumo
 }
 ```
 
+- `guide: false` でスキルの案内の差し込みを止める。
 - `attribution: true` で署名行を許す（既定は止める）。
 - `destructive.confirm: false` で、取り返しのつかないコマンドの確認を止める。
 - `stop.commit: false` でコミットの催促を止める。
 - `worktree.link` に `"node_modules"` などを入れると、新しいワークツリーへメインからリンクする（Windows はジャンクション）。
-- 一時的に止めるなら環境変数 `ITSUMO_DISABLE=eol,stop,destructive`（カンマ区切り）。
+- 一時的に止めるなら環境変数 `ITSUMO_DISABLE=guide,eol,stop,destructive`（カンマ区切り）。
 
 ## 署名行（attribution）
 

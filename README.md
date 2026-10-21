@@ -11,7 +11,7 @@
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-D97757)](https://code.claude.com/docs)
 [![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A5%2018-339933?logo=node.js&logoColor=white)](https://nodejs.org)
 [![Skills](https://img.shields.io/badge/skills-14-blue)](#スキル)
-[![Hooks](https://img.shields.io/badge/hooks-5-blue)](#フック)
+[![Hooks](https://img.shields.io/badge/hooks-6-blue)](#フック)
 
 [インストール](#インストール) ・
 [スキル](#スキル) ・
@@ -78,6 +78,7 @@ claude plugin install itsumo@itsumo
 
 | いつ | 何をするか |
 |---|---|
+| セッション・サブエージェントの開始 | 依頼の言い回しとスキルの対応の短い案内を最初に差し込む。スキルの呼び忘れを減らす |
 | ファイル編集の後 | 改行コードを `.gitattributes` の `eol=` に合わせる |
 | コミット・PR の作成の前 | `Co-Authored-By: Claude` や `Generated with Claude Code` が入っていたら止める |
 | 危険なコマンドの前 | 再帰的な削除、`push --force`、`reset --hard`、`DROP TABLE` などを、実行前にあなたに確認させる |
@@ -101,7 +102,7 @@ claude plugin install itsumo@itsumo
 }
 ```
 
-一時的に止めるなら、環境変数 `ITSUMO_DISABLE=eol,stop,destructive`。
+一時的に止めるなら、環境変数 `ITSUMO_DISABLE=guide,eol,stop,destructive`。
 
 全項目、スクリプト、署名行の扱いは [plugins/itsumo/README.md](plugins/itsumo/README.md)。
 

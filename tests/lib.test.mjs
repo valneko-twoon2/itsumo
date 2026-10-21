@@ -112,6 +112,19 @@ test('署名行を含む commit / PR の作成だけを止める', async () => {
   assert.equal(hasSignature('echo Co-Authored-By: Claude'), false);
 });
 
+test('スキルの案内は全スキルを挙げ、開始のイベントにだけ差し込み、設定で止められる', async () => {
+  const { readdirSync } = await import('node:fs');
+  const { contextFor } = await import('../plugins/itsumo/hooks/skill-guide.mjs');
+  const on = loadConfig('/no/such/dir', {});
+  const answer = contextFor('SessionStart', on);
+  const text = answer.hookSpecificOutput.additionalContext;
+  assert.equal(answer.hookSpecificOutput.hookEventName, 'SessionStart');
+  for (const name of readdirSync(new URL('../plugins/itsumo/skills', import.meta.url))) assert.ok(text.includes(`itsumo:${name}`), `案内に無いスキル: ${name}`);
+  assert.equal(contextFor('SubagentStart', on).hookSpecificOutput.hookEventName, 'SubagentStart');
+  assert.equal(contextFor('PreToolUse', on), null);
+  assert.equal(contextFor('SessionStart', loadConfig('/no/such/dir', { ITSUMO_DISABLE: 'guide' })), null);
+});
+
 test('取り返しのつかないコマンドだけを確認に回し、生成物のフォルダの削除は通す', async () => {
   const { destructiveReason } = await import('../plugins/itsumo/hooks/confirm-destructive.mjs');
   const safe = loadConfig('/no/such/dir', {}).destructive.safeDirs;

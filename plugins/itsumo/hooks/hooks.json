@@ -1,13 +1,29 @@
 {
-  "description": "itsumo: 編集後に改行を直し、コミットの署名行と取り返しのつかないコマンドを止め、停止時にコミットとワークツリー削除を催促する",
+  "description": "itsumo: 開始時にスキルの案内を差し込み、編集後に改行を直し、コミットの署名行と取り返しのつかないコマンドを止め、停止時にコミットとワークツリー削除を催促する",
   "hooks": {
     "SessionStart": [
       {
         "hooks": [
           {
             "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/skill-guide.mjs\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/snapshot.mjs\"",
             "timeout": 15
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/skill-guide.mjs\"",
+            "timeout": 10
           }
         ]
       }

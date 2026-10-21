@@ -1,10 +1,12 @@
 // itsumo のプロジェクト設定: プロジェクトの `.claude/itsumo.json` を下の既定値に重ねたもの。キーはすべて省略可で、
-// ファイルが無い・壊れているときは既定値になる。環境変数 ITSUMO_DISABLE（カンマ区切り: eol, stop, destructive）で、
+// ファイルが無い・壊れているときは既定値になる。環境変数 ITSUMO_DISABLE（カンマ区切り: guide, eol, stop, destructive）で、
 // ファイルを触らずにそのシェルだけ一部を止められる。
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 export const DEFAULTS = {
+  // セッションとサブエージェントの開始時に、依頼とスキルの対応の案内（lib/skill-guide.md）を差し込む。
+  guide: true,
   // 改行は .gitattributes（`eol=lf` / `eol=crlf`）に従う。eol 属性の無いファイルには触らない。
   eol: true,
   // true なら Claude の署名行（Co-Authored-By など）をコミットと PR に付けてよい。既定は付けさせない（hooks/no-attribution.mjs）。
@@ -53,6 +55,7 @@ export function loadConfig(root, env = process.env) {
   }
   const config = merge(DEFAULTS, file);
   const off = new Set(String(env.ITSUMO_DISABLE ?? '').split(',').map((s) => s.trim()).filter(Boolean));
+  if (off.has('guide')) config.guide = false;
   if (off.has('eol')) config.eol = false;
   if (off.has('destructive')) config.destructive = { ...config.destructive, confirm: false };
   if (off.has('stop')) config.stop = { ...config.stop, commit: false, worktrees: false };
