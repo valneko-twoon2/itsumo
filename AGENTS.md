@@ -8,6 +8,8 @@
 |---|---|
 | `.claude-plugin/marketplace.json` | マーケットプレイスの定義 |
 | `plugins/itsumo/` | プラグイン本体。ここに置いたものは利用者に配られる |
+| `CHANGELOG.md` | 変更履歴（Keep a Changelog 形式、日本語） |
+| `LICENSE` | MIT。プラグイン配布物用に `plugins/itsumo/LICENSE` にも同じものを置く |
 | `tests/` | `lib/` と `hooks/` のユニットテスト。**プラグインの外に置く**（中に置くと配布物に入る） |
 | `eval-suite/evals/` | スキルの評価ケース（`claude plugin eval` 用）。**プラグインの外に置く**。結果の `results/` は Git の対象外 |
 
@@ -37,6 +39,13 @@ claude plugin validate . --strict
 ```
 
 フックやスクリプトを変えたら、テストを `tests/` に足す。ファイルは LF で書く。
+
+## 変更履歴（CHANGELOG.md）
+
+- **利用者に見える変更（スキル・フック・設定・挙動の追加や変更、削除）をしたら、同じコミットで `CHANGELOG.md` の「未リリース」に書く。** 内部だけの変更（テスト、AGENTS.md、評価ケースなど）は書かなくてよい。
+- 見出しは「追加」「変更」「修正」「削除」。1 項目 1 行、日本語、利用者の目線で書く。
+- リリースするときは「未リリース」を `## [バージョン]` に改め、`plugins/itsumo/.claude-plugin/plugin.json` の `version` を合わせる。
+- `LICENSE` を変えたら、ルートと `plugins/itsumo/LICENSE` の両方を同じにする。
 
 ## 評価（eval）
 
