@@ -8,7 +8,7 @@ import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { loadConfig, projectRoot } from '../lib/config.mjs';
 import { defaultBranch, diffSize, finished, git, isFresh, isLarge, parseWorktrees, worktreeRoots } from '../lib/git.mjs';
-import { changedSince, dirtyHashes, loadSnapshot } from '../lib/snapshot.mjs';
+import { changedSince, createdSince, dirtyHashes, loadSnapshot } from '../lib/snapshot.mjs';
 
 const WORKTREE = fileURLToPath(new URL('../lib/worktree.mjs', import.meta.url));
 
@@ -74,12 +74,14 @@ if (isMain)
         const base = config.worktree.base || defaultBranch(roots[0]);
         const trees = parseWorktrees(git(roots[0], ['worktree', 'list', '--porcelain']));
         const merged = new Set(git(roots[0], ['branch', '--merged', base, '--format=%(refname:short)']).split(/\r?\n/).map((b) => b.trim()).filter(Boolean));
+        // ユーザーや他のセッションのワークツリーは消すよう促さない: このセッションの間に作られたものだけが対象。
+        const mine = createdSince(before, trees.map((t) => t.path), project);
         leftover = finished(trees, {
           merged,
           dirty: (p) => git(p, ['status', '--porcelain']).trim() !== '',
           missing: (p) => !existsSync(p),
           fresh: isFresh,
-        }).map((t) => t.path);
+        }).map((t) => t.path).filter((p) => mine.includes(p));
       }
       const text = reminder(input, changed, inMerge, leftover, isLarge(size, stop.largeDiff) ? size : null);
       if (!text) return;

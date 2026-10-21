@@ -45,9 +45,22 @@ function onlySafeTargets(segment, safeDirs) {
   return names.length > 0 && names.every((n) => safeDirs.includes(n));
 }
 
+const QUOTED = String.raw`(?:"(?:[^"\\]|\\.)*"|'[^']*')`;
+// 実行されない文字列: コミットや PR のメッセージ（-m、--message、--body、--title など）と、echo / printf の引数。
+// `psql -c "DROP TABLE x"` や `bash -c "..."` は実行されるので、ここには含めない。
+const TEXT_ARGS = new RegExp(String.raw`((?:\s-[a-zA-Z]*[mtb]|\s--(?:message|body|title|notes|description))(?:\s+|=)|\b(?:echo|printf|Write-Host|Write-Output)\s+)${QUOTED}`, 'g');
+// メッセージを渡すヒアドキュメント（`git commit -F - <<'EOF'` など）の本文。`psql <<EOF` のような実行される本文は残す。
+const MESSAGE_HEREDOC = /(^[^\n]*(?:\bgit\b[^\n]*\bcommit\b|\bgh\s+(?:pr|issue)\b|\bcat\s*>)[^\n]*<<-?\s*['"]?(\w+)['"]?[^\n]*)\n[\s\S]*?\n[ \t]*\2[ \t]*(?=\n|$)/gm;
+
+/** 実行されない文字列（メッセージ、echo の引数、メッセージ用のヒアドキュメント）を空にする。 */
+export function withoutMessages(command) {
+  return command.replace(MESSAGE_HEREDOC, '$1\n').replace(TEXT_ARGS, '$1""');
+}
+
 /** 確認が要るなら、その理由。要らなければ null。 */
-export function destructiveReason(command, safeDirs = []) {
-  if (typeof command !== 'string') return null;
+export function destructiveReason(original, safeDirs = []) {
+  if (typeof original !== 'string') return null;
+  const command = withoutMessages(original);
   for (const [re, why] of RULES) if (re.test(command)) return why;
   const flags = withoutQuoted(command);
   for (const [re, why] of BYPASS) if (re.test(flags)) return why;

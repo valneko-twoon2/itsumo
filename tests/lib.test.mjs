@@ -166,3 +166,59 @@ test('取り返しのつかないコマンドだけを確認に回し、生成�
   passes('git push -n');
   passes('git commit -m x');
 });
+
+test('メッセージや echo の中に書いた危険なコマンドの名前では確認せず、実行される文字列は確認する', async () => {
+  const { destructiveReason } = await import('../hooks/confirm-destructive.mjs');
+  const safe = [];
+  const passes = (c) => assert.equal(destructiveReason(c, safe), null, `通るべき: ${c}`);
+  const asks = (c) => assert.ok(destructiveReason(c, safe), `確認されるべき: ${c}`);
+  passes('git commit -m "docs: git reset --hard の説明を足す"');
+  passes('git commit -am "chore: rm -rf を確認に回す"');
+  passes("git commit -m 'fix: git push --force を止める'");
+  passes('git commit -F - <<\'EOF\'\nfix: push --force を止める\n\n- git push -f も\nEOF');
+  passes('git commit -m "$(cat <<\'EOF\'\nfeat: DROP TABLE の確認\n\n- rm -rf も\nEOF\n)"');
+  passes('gh pr create --title "x" --body "DROP TABLE の確認を足す"');
+  passes('echo "git clean -fd は使わない"');
+  asks('git commit -m "x" && git reset --hard');
+  asks('psql -c "DROP TABLE users"');
+  asks('bash -c "rm -rf src"');
+  asks('psql <<EOF\nDROP TABLE users;\nEOF');
+  asks('git commit --no-verify -m "x"');
+});
+
+test('dirtyHashes: 消えたファイルがあっても全部のハッシュを返し、入れ子のワークツリーは数えない', async () => {
+  const { execFileSync } = await import('node:child_process');
+  const { mkdtempSync, mkdirSync, rmSync, writeFileSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const { dirtyHashes } = await import('../lib/snapshot.mjs');
+  const dir = mkdtempSync(join(tmpdir(), 'itsumo-test-'));
+  const run = (...args) => execFileSync('git', args, { cwd: dir, stdio: 'ignore' });
+  try {
+    run('init', '-q', '-b', 'main');
+    run('config', 'user.email', 't@example.com');
+    run('config', 'user.name', 't');
+    writeFileSync(join(dir, 'a.txt'), 'a\n');
+    writeFileSync(join(dir, 'b.txt'), 'b\n');
+    run('add', '.');
+    run('commit', '-q', '-m', 'init');
+    rmSync(join(dir, 'a.txt'));
+    writeFileSync(join(dir, 'b.txt'), 'b2\n');
+    mkdirSync(join(dir, '.claude', 'worktrees'), { recursive: true });
+    run('worktree', 'add', '-q', join('.claude', 'worktrees', 'x'), '-b', 'wx');
+    const out = dirtyHashes(dir, []);
+    assert.deepEqual(Object.keys(out).sort(), ['a.txt', 'b.txt']);
+    assert.equal(out['a.txt'], 'deleted');
+    assert.notEqual(out['b.txt'], 'deleted');
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('createdSince: 開始時の記録に無く、今いる場所でもないワークツリーだけ。記録が無ければ空', async () => {
+  const { createdSince } = await import('../lib/snapshot.mjs');
+  const before = { '/r': {}, '/r-wt-old': {} };
+  const paths = ['/r', '/r-wt-old', '/r-wt-new', '/r-wt-here'];
+  assert.deepEqual(createdSince(before, paths, '/r-wt-here'), ['/r-wt-new']);
+  assert.deepEqual(createdSince(null, paths, '/r'), []);
+});
