@@ -2,7 +2,7 @@
 
 このプラグインの目立つ変更をここに書く。形式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) に沿い、バージョンは [セマンティック バージョニング](https://semver.org/lang/ja/) に従う。
 
-## [未リリース]
+## [1.0.1] - 2026-10-22
 
 ### 追加
 
@@ -36,5 +36,5 @@
 - `LICENSE`（MIT）と `CHANGELOG.md`
 - ユニットテスト（`tests/`）とスキルの評価ケース（`eval-suite/evals/`）
 
-[未リリース]: https://github.com/valneko-twoon2/itsumo/compare/v1.0.0...HEAD
+[1.0.1]: https://github.com/valneko-twoon2/itsumo/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/valneko-twoon2/itsumo/releases/tag/v1.0.0
