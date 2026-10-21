@@ -4,7 +4,7 @@ description: "コードを変えるときのテストの扱いを決める: 変�
 argument-hint: "何を変えたか（省略時は今の差分）"
 ---
 
-テストケースの選び方（同値分割、境界値、状態遷移、デシジョンテーブルなど）は `/itsumo:designing-test-cases`、テストが本物の変更に気づくかの確認は `/itsumo:running-mutation-tests`。プロジェクトに独自の手順（`docs/verification.md`、`CONTRIBUTING.md`、影響範囲を選ぶスクリプト）があれば**そちらを優先**する。
+テストケースの選び方（同値分割、境界値、状態遷移、デシジョンテーブルなど）は `/itsumo:designing-test-cases`。プロジェクトに独自の手順（`docs/verification.md`、`CONTRIBUTING.md`、影響範囲を選ぶスクリプト）があれば**そちらを優先**する。
 
 ## 1. 変える前に
 

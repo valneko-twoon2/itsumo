@@ -20,10 +20,7 @@ claude plugin install itsumo@itsumo
 | `committing-changes` | 自分の変更だけをステージし、要点が先に来る短いメッセージでコミットする |
 | `running-regression-tests` | 変更に合わせてテストを足す・直す・消し、影響する範囲のテストだけを走らせ、成功・失敗・未実行を分けて報告する |
 | `designing-test-cases` | テストケースの選び方（同値分割、境界値、条件網羅、プロパティ、状態遷移表、デシジョンテーブル、ペアワイズ） |
-| `running-mutation-tests` | ミューテーションテストで、テストが本物の変更に気づくかを 1 ファイルずつ確かめる（cargo-mutants、Stryker、mutmut、PIT など） |
 | `reviewing-security-boundaries` | 境界（API、URL、ファイルパス、プロセス起動、外部データ、秘密情報、DB、依存）を変えるときの確認表 |
-| `syncing-docs` | アーキテクチャマップ、機能ごとの設計ページ、ユーザー向け文書をコードと食い違わないよう保つ |
-| `localizing-ui-text` | 画面の文言の多言語化の決まり（ハードコードしない、主言語は同時に、他は一括で訳す、用語集） |
 | `managing-worktrees` | メインに触れずに作業する Git ワークツリーを作り、リンクを先に外して安全に消す |
 | `merging-subagent-work` | サブエージェントのブランチを、報告と差分の突き合わせ・決まりの確認・マージ後の再チェック・片付けを経て取り込む |
 
@@ -46,7 +43,6 @@ claude plugin install itsumo@itsumo
 
 - `node <plugin>/lib/worktree.mjs add <name> | remove <path> [--force] | list`
 - `node <plugin>/lib/fix-eol.mjs <path>... | --check [<path>...]`
-- `node <plugin>/lib/docs-check.mjs [--staged] | --find <path>...`
 
 ## 設定
 
@@ -63,7 +59,6 @@ claude plugin install itsumo@itsumo
     "worktrees": true,
     "ignore": ["node_modules/", "dist/", "build/", "target/", "coverage/", "test-results/"]
   },
-  "docs": { "map": "docs/architecture", "design": "docs/design", "entryLimit": 7000, "pageLimit": 14000 },
   "worktree": { "link": [], "base": null }
 }
 ```

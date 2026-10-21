@@ -4,7 +4,6 @@ import { test } from 'node:test';
 import { loadConfig } from '../plugins/itsumo/lib/config.mjs';
 import { badEol, eolFromAttr, eolFromCheckAttr, withEol } from '../plugins/itsumo/lib/eol.mjs';
 import { finished, parseWorktrees, pending, rootHolding } from '../plugins/itsumo/lib/git.mjs';
-import { coversOf, covers, linksIn, pathsIn, stagedWarnings, structureProblems } from '../plugins/itsumo/lib/docs-check.mjs';
 import { rewritesFiles } from '../plugins/itsumo/hooks/eol-after-shell.mjs';
 import { reminder } from '../plugins/itsumo/hooks/stop.mjs';
 
@@ -87,53 +86,6 @@ test('設定は既定値に重なり、ITSUMO_DISABLE で止められる', () =>
   assert.equal(c.eol, true);
   assert.equal(c.stop.commit, false);
   assert.ok(c.stop.ignore.includes('node_modules/'));
-});
-
-test('covers: ファイル、フォルダ、* と **', () => {
-  assert.equal(covers('src/a.ts', 'src/a.ts'), true);
-  assert.equal(covers('src/engine', 'src/engine/x/y.ts'), true);
-  assert.equal(covers('src/*.ts', 'src/a.ts'), true);
-  assert.equal(covers('src/*.ts', 'src/x/a.ts'), false);
-  assert.equal(covers('src/**', 'src/x/a.ts'), true);
-  assert.equal(covers('src/**/a.ts', 'src/a.ts'), true);
-  assert.equal(covers('src/**/a.ts', 'src/x/y/a.ts'), true);
-  assert.equal(covers('src/**/a.ts', 'srcx/a.ts'), false);
-});
-
-test('coversOf はフロントマターの一覧を読む', () => {
-  assert.deepEqual(coversOf('---\ncovers:\n  - src/a.ts\n  - "src/b/**"\ntitle: x\n---\n# T'), ['src/a.ts', 'src/b/**']);
-  assert.equal(coversOf('# no front matter'), null);
-});
-
-test('pathsIn はトップレベルで始まるパスだけ、linksIn は相対リンクだけ', () => {
-  const body = 'See `src/a.ts`, `npm run x`, `tools/list`, `foo/bar`, `src/<name>.ts`.\n```\n`src/ignored.ts`\n```\n[x](./b.md#h) [y](https://e.com)';
-  assert.deepEqual(pathsIn(body, new Set(['src', 'tools'])), ['src/a.ts', 'tools/list', 'src/']);
-  assert.deepEqual(linksIn(body), ['./b.md']);
-});
-
-test('structureProblems: 載っていないフォルダ、無いパス、covers、索引、サイズ', () => {
-  const files = ['src/a.ts', 'lib/b.ts', 'docs/architecture/README.md', 'docs/design/README.md', 'docs/design/queue.md', 'docs/design/orphan.md'];
-  const pages = {
-    'docs/architecture/README.md': '`src/` is the app. `src/gone.ts`. See `docs/`.',
-    'docs/design/README.md': '- queue.md',
-    'docs/design/queue.md': '---\ncovers:\n  - src/a.ts\n  - src/missing/**\n---\n# Queue',
-    'docs/design/orphan.md': '# no covers',
-  };
-  const problems = structureProblems(files, (p) => pages[p] ?? '', { map: 'docs/architecture', design: 'docs/design', entryLimit: 7000, pageLimit: 14000 });
-  const has = (re) => assert.ok(problems.some((p) => re.test(p)), `${re} in\n${problems.join('\n')}`);
-  has(/"lib\/"/);
-  has(/src\/gone\.ts/);
-  has(/src\/missing/);
-  has(/orphan\.md: .*covers/);
-  has(/orphan\.md が載っていない/);
-  assert.equal(problems.length, 5);
-});
-
-test('stagedWarnings は扱うコードが変わりページが無いときだけ警告する', () => {
-  const pages = [{ page: 'docs/design/q.md', covers: ['src/q/**'] }];
-  assert.equal(stagedWarnings(['src/q/a.ts'], pages).length, 1);
-  assert.equal(stagedWarnings(['src/q/a.ts', 'docs/design/q.md'], pages).length, 0);
-  assert.equal(stagedWarnings(['src/q/a.test.ts'], pages).length, 0);
 });
 
 test('changedSince: 開始時と内容が同じものは除き、記録が無ければすべて', async () => {

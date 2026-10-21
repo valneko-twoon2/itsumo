@@ -21,15 +21,6 @@ export const DEFAULTS = {
     // 未コミットとして数えないパスの前方一致（生成物、ユーザーデータ）。
     ignore: ['node_modules/', 'dist/', 'build/', 'target/', 'coverage/', 'test-results/'],
   },
-  docs: {
-    // アーキテクチャマップ: 作業の最初に読む短い案内（itsumo:syncing-docs スキル）。
-    map: 'docs/architecture',
-    // 設計ページ: 機能ごとに 1 枚、記述対象のコードを `covers:` に書く。
-    design: 'docs/design',
-    // マップの入口ページ（README.md）、他のマップページ、設計ページのバイト数上限。
-    entryLimit: 7000,
-    pageLimit: 14000,
-  },
   worktree: {
     // 新しいワークツリーへメインのチェックアウトからリンクするフォルダ（Windows はジャンクション、他はシンボリックリンク）。
     link: [],

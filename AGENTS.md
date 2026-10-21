@@ -57,7 +57,7 @@ claude plugin eval . --eval-dir eval-suite/evals --ablation none --no-publish --
 
 - スキルを足す・名前や `description` を変えたら、そのスキルのケースを足す・直して走らせる。スキルごとに「呼ばれる」ケース（`tool_used: Skill`）を 1 つ以上、必要なら回答の質を見る `llm` や `regex` の採点者を付ける。関係ない依頼で呼ばれないことを見るケース（`max: 0` と `min: 0`）も 1 つ置く。
 - 1 ケースだけ試すには `--case <名前> --runs 1`（`--case` は 1 つだけ。複数指定すると最後のものだけが使われる）。モデルは `--model haiku|sonnet|opus` で変える。Haiku・Sonnet・Opus のどれでも確かめる。
-- 全 10 ケースで、Sonnet は約 $0.5、Opus は約 $1、Haiku は数セント（1 回ずつ）。
+- 全 7 ケースで、Sonnet は約 $0.35、Opus は約 $0.7、Haiku は数セント（1 回ずつ）。
 - Windows では Bash を許可するケースは動かせない。ケースの `allowed_tools` は `Read, Glob, Grep, Skill` に限る。
 - 直近の結果: Sonnet と Opus は全件通る。Haiku は説明文を強めた後も、スキルを呼ばずに自力で答えることがある（`committing-changes` `reviewing-security-boundaries` `running-regression-tests` で 3 回中 1〜2 回）。
 
