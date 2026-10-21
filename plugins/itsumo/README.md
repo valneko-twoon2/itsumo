@@ -23,6 +23,7 @@ claude plugin install itsumo@itsumo
 | `making-minimal-changes` | 既存のコードを直すとき、依頼に必要な最小の差分だけを入れる（ついでの整形・改名・リファクタをせず、気づいた別件は報告する） |
 | `following-existing-code` | 新しくコードを書く前に同じ役割の既存コードを読み、命名・構造・エラー処理・テスト・使う道具をそれに合わせる |
 | `designing-test-cases` | テストケースの選び方（同値分割、境界値、条件網羅、プロパティ、状態遷移表、デシジョンテーブル、ペアワイズ） |
+| `writing-pr-descriptions` | PR の説明を、概要・背景・変更点・確認・見てほしい点の順で書く（署名行は付けない） |
 | `reviewing-security-boundaries` | 境界（API、URL、ファイルパス、プロセス起動、外部データ、秘密情報、DB、依存）を変えるときの確認表。Web 用とデスクトップ用の表を分けて持つ |
 | `managing-worktrees` | メインに触れずに作業する Git ワークツリーを作り、リンクを先に外して安全に消す |
 | `merging-subagent-work` | サブエージェントのブランチを、報告と差分の突き合わせ・決まりの確認・マージ後の再チェック・片付けを経て取り込む |
