@@ -1,12 +1,12 @@
-// node --test plugins/itsumo/tests で走る。
+// node --test tests/lib.test.mjs で走る。
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { loadConfig } from '../plugins/itsumo/lib/config.mjs';
-import { badEol, eolFromAttr, eolFromCheckAttr, withEol } from '../plugins/itsumo/lib/eol.mjs';
-import { finished, parseWorktrees, pending, rootHolding } from '../plugins/itsumo/lib/git.mjs';
-import { coversOf, covers, linksIn, pathsIn, stagedWarnings, structureProblems } from '../plugins/itsumo/lib/docs-check.mjs';
-import { rewritesFiles } from '../plugins/itsumo/hooks/eol-after-shell.mjs';
-import { reminder } from '../plugins/itsumo/hooks/stop.mjs';
+import { loadConfig } from '../lib/config.mjs';
+import { badEol, eolFromAttr, eolFromCheckAttr, withEol } from '../lib/eol.mjs';
+import { finished, parseWorktrees, pending, rootHolding } from '../lib/git.mjs';
+import { coversOf, covers, linksIn, pathsIn, stagedWarnings, structureProblems } from '../lib/docs-check.mjs';
+import { rewritesFiles } from '../hooks/eol-after-shell.mjs';
+import { reminder } from '../hooks/stop.mjs';
 
 test('eol 属性が無いファイルには改行を求めない', () => {
   assert.equal(eolFromAttr('text=auto eol=lf'), 'lf');
@@ -137,14 +137,14 @@ test('stagedWarnings は扱うコードが変わりページが無いときだ�
 });
 
 test('changedSince: 開始時と内容が同じものは除き、記録が無ければすべて', async () => {
-  const { changedSince } = await import('../plugins/itsumo/lib/snapshot.mjs');
+  const { changedSince } = await import('../lib/snapshot.mjs');
   const before = { 'a.ts': 'h1', 'b.ts': 'h2' };
   assert.deepEqual(changedSince(before, { 'a.ts': 'h1', 'b.ts': 'h9', 'c.ts': 'h3' }), ['b.ts', 'c.ts']);
   assert.deepEqual(changedSince(null, { 'a.ts': 'h1' }), ['a.ts']);
 });
 
 test('署名行を含む commit / PR の作成だけを止める', async () => {
-  const { hasSignature } = await import('../plugins/itsumo/hooks/no-attribution.mjs');
+  const { hasSignature } = await import('../hooks/no-attribution.mjs');
   assert.equal(hasSignature('git commit -m "x\n\nCo-Authored-By: Claude Opus <noreply@anthropic.com>"'), true);
   assert.equal(hasSignature('gh pr create --body "Generated with [Claude Code](https://claude.com/claude-code)"'), true);
   assert.equal(hasSignature('git commit -m "Add x"'), false);
