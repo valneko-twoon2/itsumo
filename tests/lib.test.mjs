@@ -222,3 +222,50 @@ test('createdSince: 開始時の記録に無く、今いる場所でもないワ
   assert.deepEqual(createdSince(before, paths, '/r-wt-here'), ['/r-wt-new']);
   assert.deepEqual(createdSince(null, paths, '/r'), []);
 });
+
+test('stagesEverything は全部を巻き込む形だけを挙げ、パスやメッセージは見ない', async () => {
+  const { stagesEverything, commitsAll, isCommit, addTargets } = await import('../lib/protect.mjs');
+  for (const c of ['git add -A', 'git add .', 'git add --all', 'git add -u', 'git commit -a -m x', 'git commit -am "x"', 'cd app && git add . && git commit -m x']) assert.equal(stagesEverything(c), true, c);
+  for (const c of ['git add src/a.ts', 'git add .claude/itsumo.json', 'git add ./src', 'git commit -m "x"', 'git commit --amend --no-edit', 'git commit --allow-empty -m x', 'git commit -m "fix: git add -A を止める"', 'git status']) assert.equal(stagesEverything(c), false, c);
+  assert.equal(commitsAll('git commit -am x'), true);
+  assert.equal(commitsAll('git add -A'), false);
+  assert.equal(isCommit('git commit -m x'), true);
+  assert.equal(isCommit('echo "git commit"'), false);
+  assert.deepEqual(addTargets('git add a.ts "b c.ts" -f && git commit -m x'), ['a.ts', 'b c.ts']);
+});
+
+test('secretName と secretKinds: 秘密のファイル名と鍵の形だけを拾い、見本は拾わない', async () => {
+  const { secretName, secretKinds, addedByFile } = await import('../lib/protect.mjs');
+  for (const n of ['.env', '.env.local', 'config/.env.production', 'server.pem', 'id_rsa', 'a/b/cert.key']) assert.equal(secretName(n), true, n);
+  for (const n of ['.env.example', '.env.sample', 'envelope.ts', 'keyboard.ts', 'README.md']) assert.equal(secretName(n), false, n);
+  assert.deepEqual(secretKinds(`key = "${'AKIA'}${'ABCDEFGHIJKLMNOP'}"`), ['AWS のアクセスキー']);
+  assert.deepEqual(secretKinds(`${'-----BEGIN'} ${'OPENSSH PRIVATE KEY-----'}`), ['秘密鍵']);
+  assert.deepEqual(secretKinds(`token ${'ghp'}_${'a'.repeat(36)}`), ['GitHub のトークン']);
+  assert.deepEqual(secretKinds('const AKIA = "see docs"; // sk-... ghp_xxx'), []);
+  const diff = ['diff --git a/a.ts b/a.ts', '--- a/a.ts', '+++ b/a.ts', '@@ -1 +1 @@', '-old', '+new line'].join('\n');
+  assert.deepEqual(addedByFile(diff), [{ path: 'a.ts', text: 'new line' }]);
+});
+
+test('protectedReason: 秘密・ロックファイル・生成物のフォルダの中だけを確認に回す', async () => {
+  const { protectedReason } = await import('../lib/protect.mjs');
+  const protect = loadConfig('/no/such/dir', {}).protect;
+  for (const p of ['.env', 'app/.env.local', 'package-lock.json', 'sub/Cargo.lock', 'node_modules/x/index.js', 'dist/app.js', 'web/build/a.js']) assert.ok(protectedReason(p, protect), p);
+  for (const p of ['.env.example', 'src/env.ts', 'src/dist-utils.ts', 'docs/lock.md', 'src/build.ts', 'README.md']) assert.equal(protectedReason(p, protect), null, p);
+  assert.equal(loadConfig('/no/such/dir', { ITSUMO_DISABLE: 'protect' }).protect.edits, false);
+});
+
+test('untouchedSince と snapshotFor: 開始時から変わっていないユーザーの変更だけを挙げる', async () => {
+  const { untouchedSince, snapshotFor } = await import('../lib/snapshot.mjs');
+  assert.deepEqual(untouchedSince({ 'a.ts': 'h1', 'b.ts': 'h2' }, { 'a.ts': 'h1', 'b.ts': 'h9', 'c.ts': 'h3' }), ['a.ts']);
+  assert.deepEqual(untouchedSince(null, { 'a.ts': 'h1' }), []);
+  assert.deepEqual(snapshotFor({ '/R/x': { f: 'h' } }, '/r/x'), { f: 'h' });
+  assert.equal(snapshotFor({}, '/r'), null);
+});
+
+test('mergeNote: 未マージのブランチがあるときだけ、取り込みの手順を案内する', async () => {
+  const { mergeNote } = await import('../hooks/remind-merge.mjs');
+  assert.equal(mergeNote([], 'main'), null);
+  const text = mergeNote([{ branch: '20260101_a', path: '/r-wt-a', ahead: 2 }], 'main');
+  assert.match(text, /20260101_a/);
+  assert.match(text, /itsumo:merging-subagent-work/);
+});

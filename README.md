@@ -11,7 +11,7 @@
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-D97757)](https://code.claude.com/docs)
 [![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A5%2018-339933?logo=node.js&logoColor=white)](https://nodejs.org)
 [![Skills](https://img.shields.io/badge/skills-15-blue)](#スキル)
-[![Hooks](https://img.shields.io/badge/hooks-6-blue)](#フック)
+[![Hooks](https://img.shields.io/badge/hooks-9-blue)](#フック)
 
 [インストール](#インストール) ・
 [スキル](#スキル) ・
@@ -42,6 +42,8 @@
 | 曖昧な依頼を、推測で作り込んでしまう | `clarifying-requests` が選択肢つきで聞き、答えが曖昧なら深掘りする |
 | `rm -rf` や `push --force` を、確かめずに実行する | フックが実行前にあなたへ確認し、スキルが戻し方を用意させる |
 | コミットに `Co-Authored-By: Claude` が付く | フックが実行前に止める |
+| `git add -A` で、あなたの作業中の変更まで Claude のコミットに入る | フックが実行前に確認する |
+| `.env` や鍵、トークンをコミットしてしまう | フックがコミットの前に確認する |
 | 作業して、コミットしないまま終わる | Stop フックがコミットを促す |
 
 ## インストール
@@ -80,8 +82,11 @@ claude plugin install itsumo@itsumo
 | いつ | 何をするか |
 |---|---|
 | セッション・サブエージェントの開始 | 依頼の言い回しとスキルの対応の短い案内を最初に差し込む。スキルの呼び忘れを減らす |
+| ファイル編集の前 | `.env`、鍵、ロックファイル、生成物のフォルダ（`node_modules/`、`dist/` など）の中の編集を、あなたに確認させる。`.env.example` のような見本は対象外 |
 | ファイル編集の後 | 改行コードを `.gitattributes` の `eol=` に合わせる |
 | コミット・PR の作成の前 | `Co-Authored-By: Claude` や `Generated with Claude Code` が入っていたら止める |
+| コミットの前 | あなたの未コミットの変更（セッションの前からあるもの）を巻き込む `git add -A` / `git add .` / `git commit -a`、と、秘密のファイルや鍵・トークンの形がステージされたコミットを、あなたに確認させる |
+| サブエージェントが戻ったとき | 未マージのブランチがあれば、取り込む前に報告と差分を突き合わせる手順（`merging-subagent-work`）を案内する |
 | 危険なコマンドの前 | 再帰的な削除、`push --force`、`reset --hard`、`DROP TABLE` などと、`--no-verify` や `--no-gpg-sign` でチェックや署名を飛ばす操作を、実行前にあなたに確認させる |
 | 作業を終えるとき | 未コミットの変更があればコミットを促す。変更が大きいときは、最小の変更の見直しも促す。このセッションで作った用済みのワークツリーの削除も促す |
 
@@ -108,6 +113,13 @@ claude plugin install itsumo@itsumo
     "confirm": true,
     "safeDirs": ["node_modules", "dist", "build", "target", "coverage", "test-results", ".next", ".turbo", ".cache", "__pycache__", ".pytest_cache"]
   },
+  "protect": {
+    "stageAll": true,
+    "secrets": true,
+    "edits": true,
+    "files": [".env", ".env.*", "*.pem", "*.key", "id_rsa", "id_ed25519", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "Cargo.lock", "poetry.lock", "uv.lock", "Gemfile.lock", "composer.lock", "go.sum"],
+    "dirs": ["node_modules", "dist", "build", "target", "coverage", ".next"]
+  },
   "stop": {
     "commit": true,
     "worktrees": true,
@@ -121,9 +133,10 @@ claude plugin install itsumo@itsumo
 - `guide: false` でスキルの案内の差し込みを止める。
 - `attribution: true` で署名行を許す（既定は止める）。
 - `destructive.confirm: false` で、取り返しのつかないコマンドの確認を止める。
+- `protect.stageAll: false` で全部を巻き込むステージの確認を、`protect.secrets: false` で秘密の確認を、`protect.edits: false` で保護ファイルの編集の確認を止める。`protect.files` と `protect.dirs` で対象を変える。
 - `stop.commit: false` でコミットの催促を止める。
 - `worktree.link` に `"node_modules"` などを入れると、新しいワークツリーへメインからリンクする（Windows はジャンクション）。
-- 一時的に止めるなら環境変数 `ITSUMO_DISABLE=guide,eol,stop,destructive`（カンマ区切り）。
+- 一時的に止めるなら環境変数 `ITSUMO_DISABLE=guide,eol,stop,destructive,protect`（カンマ区切り）。
 
 ## 署名行（attribution）
 

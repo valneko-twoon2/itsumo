@@ -4,6 +4,14 @@
 
 ## [未リリース]
 
+### 追加
+
+- フック: `git add -A` / `git add .` / `git commit -a` が、セッションの前からあるあなたの未コミットの変更を巻き込むとき、実行前に確認する
+- フック: 秘密のファイル（`.env`、鍵、証明書）や、鍵・トークンの形（AWS、GitHub、Slack、Anthropic など）がステージされたコミットの前に確認する
+- フック: `.env`、鍵、ロックファイル、生成物のフォルダ（`node_modules/`、`dist/` など）の中の編集の前に確認する
+- フック: サブエージェントが戻ったとき、未マージのブランチがあれば `merging-subagent-work` の手順を案内する
+- 設定 `protect`（`stageAll`、`secrets`、`edits`、`files`、`dirs`）と、`ITSUMO_DISABLE=protect`
+
 ### 変更
 
 - 完了前の確認に「利用者に見える変更なら文書も直す」を足した（running-regression-tests）

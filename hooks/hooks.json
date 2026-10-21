@@ -1,5 +1,5 @@
 {
-  "description": "itsumo: 開始時にスキルの案内を差し込み、編集後に改行を直し、コミットの署名行と取り返しのつかないコマンドを止め、停止時にコミットとワークツリー削除を催促する",
+  "description": "itsumo: 開始時にスキルの案内を差し込み、編集の前後に保護ファイルの確認と改行の修正をし、コミットの署名行・秘密・取り返しのつかないコマンドを止め、サブエージェントの取り込みを案内し、停止時にコミットとワークツリー削除を催促する",
   "hooks": {
     "SessionStart": [
       {
@@ -39,6 +39,16 @@
             "statusMessage": "Fixing line ends"
           }
         ]
+      },
+      {
+        "matcher": "Agent|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/remind-merge.mjs\"",
+            "timeout": 20
+          }
+        ]
       }
     ],
     "Stop": [
@@ -68,6 +78,23 @@
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/confirm-destructive.mjs\"",
             "timeout": 10,
             "statusMessage": "Checking for destructive commands"
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/confirm-commit.mjs\"",
+            "timeout": 30,
+            "statusMessage": "Checking what gets committed"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/confirm-edit.mjs\"",
+            "timeout": 10,
+            "statusMessage": "Checking protected files"
           }
         ]
       }
