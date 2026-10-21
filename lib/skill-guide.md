@@ -12,6 +12,9 @@ itsumo のスキル。依頼が次のどれかに当たるときは、作業を�
 - 削除、強制 push、reset、DB の書き換え、本番への操作: itsumo:handling-destructive-operations
 - コミットする: itsumo:committing-changes
 - PR を作る、PR の説明を書く: itsumo:writing-pr-descriptions
+- 依存パッケージの追加・更新・アップグレード: itsumo:updating-dependencies
+- 遅い・重い、速くしたい: itsumo:improving-performance
+- マージやリベースのコンフリクト（衝突）: itsumo:resolving-merge-conflicts
 - 並行作業のためのワークツリー: itsumo:managing-worktrees
 - サブエージェントの成果を取り込む: itsumo:merging-subagent-work
 - 初回のセットアップ（ユーザーが手動で実行するもの。自分からは呼ばない）: itsumo:setting-up-project

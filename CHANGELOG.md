@@ -6,6 +6,7 @@
 
 ### 追加
 
+- スキル 3 個: `updating-dependencies`（依存の追加・更新）、`improving-performance`（測ってから速くする）、`resolving-merge-conflicts`（マージの衝突を解く）
 - フック: `git add -A` / `git add .` / `git commit -a` が、セッションの前からあるあなたの未コミットの変更を巻き込むとき、実行前に確認する
 - フック: 秘密のファイル（`.env`、鍵、証明書）や、鍵・トークンの形（AWS、GitHub、Slack、Anthropic など）がステージされたコミットの前に確認する
 - フック: `.env`、鍵、ロックファイル、生成物のフォルダ（`node_modules/`、`dist/` など）の中の編集の前に確認する
@@ -15,6 +16,7 @@
 ### 変更
 
 - 完了前の確認に「利用者に見える変更なら文書も直す」を足した（running-regression-tests）
+- `merging-subagent-work` の衝突の節を `resolving-merge-conflicts` に移した
 - スキルの例や前提から、特定のプロジェクトに偏った表現（画像生成の例、設計ページなど）を除いた
 - 開始時のスキルの案内で、セキュリティの確認が呼ばれやすいように言い回しを足した
 

@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-D97757)](https://code.claude.com/docs)
 [![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A5%2018-339933?logo=node.js&logoColor=white)](https://nodejs.org)
-[![Skills](https://img.shields.io/badge/skills-15-blue)](#スキル)
+[![Skills](https://img.shields.io/badge/skills-18-blue)](#スキル)
 [![Hooks](https://img.shields.io/badge/hooks-9-blue)](#フック)
 
 [インストール](#インストール) ・
@@ -71,6 +71,9 @@ claude plugin install itsumo@itsumo
 | `running-regression-tests` | テストの扱い、完了の報告 | テストを足す・直す・消し、影響する範囲だけを走らせる。完了と言う前に実行して確かめ、成功・失敗・未実行を分けて報告する |
 | `designing-test-cases` | テストケースを選ぶ | 同値分割、境界値、条件網羅、プロパティ、状態遷移、デシジョンテーブル、ペアワイズ |
 | `reviewing-security-boundaries` | API、URL、パス、プロセス起動などを足す | 共通の確認表に加えて、Web 用とデスクトップ用の表を持つ |
+| `updating-dependencies` | パッケージの追加・更新 | 足す前に要るかを確かめ、1 回に 1 系統だけ最小の幅で上げ、変更履歴の破壊的な変更を読み、ロックファイルはコマンドで更新して、監査とテストまで通す |
+| `improving-performance` | 「遅い」「重い」と言われた | 基準を測り、プロファイラでボトルネックを特定し、1 回に 1 つ直して測り直し、前後の数値で報告する |
+| `resolving-merge-conflicts` | マージやリベースで衝突した | 両側の意図を読んでから解き、片方を黙って捨てず、解いた結果でビルドとテストをやり直す |
 | `committing-changes` | コミットする | 自分の変更だけをステージし、要点が先に来る短いメッセージで書く |
 | `writing-pr-descriptions` | PR を作る | 概要・背景・変更点・確認・見てほしい点の順で書く。署名行は付けない |
 | `handling-destructive-operations` | 削除、強制 push、DB の書き換えなど | 対象を見て、弱い操作で足りないか考え、戻し方を用意し、了承を得てから実行する |
