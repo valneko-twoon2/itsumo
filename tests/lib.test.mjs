@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { loadConfig } from '../plugins/itsumo/lib/config.mjs';
 import { badEol, eolFromAttr, eolFromCheckAttr, withEol } from '../plugins/itsumo/lib/eol.mjs';
-import { finished, parseWorktrees, pending, rootHolding } from '../plugins/itsumo/lib/git.mjs';
+import { finished, isLarge, parseNumstat, parseWorktrees, pending, rootHolding } from '../plugins/itsumo/lib/git.mjs';
 import { rewritesFiles } from '../plugins/itsumo/hooks/eol-after-shell.mjs';
 import { reminder } from '../plugins/itsumo/hooks/stop.mjs';
 
@@ -78,6 +78,21 @@ test('停止の催促: 未コミットを先に、次に用済みワークツリ
   assert.equal(reminder({ stop_hook_active: true }, ['a.ts'], false), null);
   assert.equal(reminder({}, ['a.ts'], true), null);
   assert.equal(reminder({}, [], false, []), null);
+});
+
+test('parseNumstat は追加と削除を足し、バイナリは数えない。isLarge は上限を超えたときだけ', () => {
+  assert.equal(parseNumstat('3\t1\ta.ts\n-\t-\timg.png\n10\t0\tb.ts\n'), 14);
+  assert.equal(parseNumstat(''), 0);
+  const limit = { files: 10, lines: 400 };
+  assert.equal(isLarge({ files: 10, lines: 400 }, limit), false);
+  assert.equal(isLarge({ files: 11, lines: 5 }, limit), true);
+  assert.equal(isLarge({ files: 2, lines: 401 }, limit), true);
+  assert.equal(isLarge({ files: 99, lines: 9999 }, false), false);
+});
+
+test('大きい変更の催促には、最小の変更の見直しが添えられる', () => {
+  assert.match(reminder({}, ['a.ts'], false, [], { files: 12, lines: 600 }), /itsumo:making-minimal-changes/);
+  assert.doesNotMatch(reminder({}, ['a.ts'], false), /変更が大きい/);
 });
 
 test('設定は既定値に重なり、ITSUMO_DISABLE で止められる', () => {

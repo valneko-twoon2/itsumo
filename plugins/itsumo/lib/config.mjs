@@ -20,6 +20,9 @@ export const DEFAULTS = {
     worktrees: true,
     // 未コミットとして数えないパスの前方一致（生成物、ユーザーデータ）。
     ignore: ['node_modules/', 'dist/', 'build/', 'target/', 'coverage/', 'test-results/'],
+    // 未コミットの変更がこれより大きいとき、最小の変更の見直しを促す（itsumo:making-minimal-changes）。false で無効。
+    // 目安: レビューで見落としが増え始める 400 行前後と、一つの依頼で触るファイルの数として多めの 10 個。プロジェクトに合わせて変えてよい。
+    largeDiff: { files: 10, lines: 400 },
   },
   worktree: {
     // 新しいワークツリーへメインのチェックアウトからリンクするフォルダ（Windows はジャンクション、他はシンボリックリンク）。

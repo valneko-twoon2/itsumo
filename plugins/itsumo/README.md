@@ -38,7 +38,7 @@ claude plugin install itsumo@itsumo
 | Bash / PowerShell の後 | ファイルを書き換えるコマンドの後、改行が `.gitattributes` と違う変更ファイルを挙げ、直すコマンドを返す |
 | SessionStart | 開始時の未コミットのファイルと内容を記録する（Stop で、セッション前からあったユーザーの変更を催促しないため） |
 | PreToolUse（Bash / PowerShell） | `git commit` と `gh pr create/edit` に Claude の署名行（Co-Authored-By、Generated with Claude Code）が入っていたら実行前に止め、外して出し直させる |
-| Stop | このセッションの間に変わった未コミットのファイルがあればコミットを求める（1 回の停止につき 1 度だけ）。すべてコミット済みなら、用済みのワークツリーの削除を求める。マージやリベースの途中、Git の外では何もしない |
+| Stop | このセッションの間に変わった未コミットのファイルがあればコミットを求める。変更が大きい（既定は 10 ファイルか 400 行を超える）ときは、`making-minimal-changes` の手順で差分の見直しも求める（1 回の停止につき 1 度だけ）。すべてコミット済みなら、用済みのワークツリーの削除を求める。マージやリベースの途中、Git の外では何もしない |
 
 フックはメインのチェックアウトとすべてのワークツリーを見る。
 
@@ -62,7 +62,8 @@ claude plugin install itsumo@itsumo
   "stop": {
     "commit": true,
     "worktrees": true,
-    "ignore": ["node_modules/", "dist/", "build/", "target/", "coverage/", "test-results/"]
+    "ignore": ["node_modules/", "dist/", "build/", "target/", "coverage/", "test-results/"],
+    "largeDiff": { "files": 10, "lines": 400 }
   },
   "worktree": { "link": [], "base": null }
 }

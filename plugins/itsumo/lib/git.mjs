@@ -101,3 +101,35 @@ export function isFresh(path, now = Date.now()) {
     return false;
   }
 }
+
+// コマンド行の長さの上限（Windows は約 32 KiB）に収まるよう、行数を数えるファイルは最大 200 個まで。
+// これを超える変更は、ファイル数だけで「大きい」と判定される。
+const NUMSTAT_MAX_PATHS = 200;
+
+/** `git diff --numstat` の出力から追加と削除の行の合計。バイナリ（`- -`）は行に数えない。 */
+export function parseNumstat(text) {
+  let lines = 0;
+  for (const row of text.split(/\r?\n/)) {
+    const m = /^(\d+)\t(\d+)\t/.exec(row);
+    if (m) lines += Number(m[1]) + Number(m[2]);
+  }
+  return lines;
+}
+
+/** `paths`（root からの相対）の、HEAD からの変更の大きさ {files, lines}。未追跡のファイルはファイル数にだけ入る。例外を投げない。 */
+export function diffSize(root, paths) {
+  let lines = 0;
+  if (paths.length && paths.length <= NUMSTAT_MAX_PATHS) {
+    try {
+      lines = parseNumstat(git(root, ['diff', 'HEAD', '--numstat', '--', ...paths]));
+    } catch {
+      // HEAD が無い（最初のコミット前）などでは、行数は数えない。
+    }
+  }
+  return { files: paths.length, lines };
+}
+
+/** 変更の大きさが上限を超えているか。`limit` が false なら判定しない。 */
+export function isLarge(size, limit) {
+  return Boolean(limit) && (size.files > limit.files || size.lines > limit.lines);
+}
