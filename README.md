@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🔁 itsumo
+# itsumo
 
 **「いつもの定型作業」を、Claude Code に任せる。**
 
@@ -10,28 +10,28 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-D97757)](https://code.claude.com/docs)
 [![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A5%2018-339933?logo=node.js&logoColor=white)](https://nodejs.org)
-[![Skills](https://img.shields.io/badge/skills-11-blue)](#-スキル)
-[![Hooks](https://img.shields.io/badge/hooks-6-blue)](#-フック)
+[![Skills](https://img.shields.io/badge/skills-11-blue)](#スキル)
+[![Hooks](https://img.shields.io/badge/hooks-6-blue)](#フック)
 
-[インストール](#-インストール) ・
-[スキル](#-スキル) ・
-[フック](#-フック) ・
-[設定](#-設定) ・
-[開発](#-開発)
+[インストール](#インストール) ・
+[スキル](#スキル) ・
+[フック](#フック) ・
+[設定](#設定) ・
+[開発](#開発)
 
 </div>
 
 ---
 
-## ✨ 特長
+## 特長
 
-- 🎯 **自動で呼ばれる**: 手動でコマンドを打たなくても、依頼の内容に合うスキルを Claude が選ぶ。`/itsumo:<名前>` で直接呼ぶこともできる。
-- 🧭 **プロジェクトを選ばない**: 特定の言語・フレームワークに依存しない。`AGENTS.md` や `CONTRIBUTING.md` などプロジェクト固有の決まりがあれば、そちらを優先する。
-- 🪝 **フックで強制する**: 「お願い」では守られにくいこと（署名行を付けない、改行コード、コミットし忘れ）は、フックで機械的に守らせる。
-- 🔬 **評価つき**: 各スキルが場面に合わせて呼ばれるかを `claude plugin eval` で確かめている。
+- **自動で呼ばれる**: 手動でコマンドを打たなくても、依頼の内容に合うスキルを Claude が選ぶ。`/itsumo:<名前>` で直接呼ぶこともできる。
+- **プロジェクトを選ばない**: 特定の言語・フレームワークに依存しない。`AGENTS.md` や `CONTRIBUTING.md` などプロジェクト固有の決まりがあれば、そちらを優先する。
+- **フックで強制する**: 「お願い」では守られにくいこと（署名行を付けない、改行コード、コミットし忘れ）は、フックで機械的に守らせる。
+- **評価つき**: 各スキルが場面に合わせて呼ばれるかを `claude plugin eval` で確かめている。
 - 🇯🇵 **日本語**: スキルの本文もメッセージも日本語。
 
-## 🧩 こんなことを防ぐ
+## こんなことを防ぐ
 
 | よくある困りごと | itsumo の対処 |
 |---|---|
@@ -43,7 +43,7 @@
 | コミットに `Co-Authored-By: Claude` が付く | フックが実行前に止める |
 | 作業して、コミットしないまま終わる | Stop フックがコミットを促す |
 
-## 🚀 インストール
+## インストール
 
 ```sh
 claude plugin marketplace add valneko-twoon2/itsumo
@@ -54,7 +54,7 @@ claude plugin install itsumo@itsumo
 
 **前提**: Node.js 18 以上と Git（フックとスクリプトが使う）。
 
-## 🛠 スキル
+## スキル
 
 | スキル | こんなときに使う | 何をするか |
 |---|---|---|
@@ -70,7 +70,7 @@ claude plugin install itsumo@itsumo
 | `managing-worktrees` | 並行して作業する | メインに触れない Git ワークツリーを作り、リンクを先に外して安全に消す |
 | `merging-subagent-work` | サブエージェントの成果を取り込む | 報告と差分の突き合わせ、決まりの確認、マージ後の再チェック、片付け |
 
-## 🪝 フック
+## フック
 
 | いつ | 何をするか |
 |---|---|
@@ -83,7 +83,7 @@ claude plugin install itsumo@itsumo
 > [!NOTE]
 > セッションの前からあった、あなた自身の未コミットの変更には催促しない（開始時に記録して、差分だけを見る）。
 
-## ⚙️ 設定
+## 設定
 
 何も設定しなくても動く。変えたいときは、プロジェクトの `.claude/itsumo.json` に書く（すべて省略可）。
 
@@ -102,7 +102,7 @@ claude plugin install itsumo@itsumo
 
 全項目、スクリプト、署名行の扱いは [plugins/itsumo/README.md](plugins/itsumo/README.md)。
 
-## 📁 構成
+## 構成
 
 ```
 .
@@ -115,7 +115,7 @@ claude plugin install itsumo@itsumo
 └── eval-suite/evals/                 スキルの評価ケース
 ```
 
-## 🧪 開発
+## 開発
 
 ```sh
 node --test tests/lib.test.mjs                 # ユニットテスト
@@ -131,6 +131,6 @@ claude plugin eval . --eval-dir eval-suite/evals --ablation none --no-publish --
 
 プラグインを直すときの決まりは [AGENTS.md](AGENTS.md)、変更の履歴は [CHANGELOG.md](CHANGELOG.md)。
 
-## 📄 ライセンス
+## ライセンス
 
 [MIT](LICENSE)

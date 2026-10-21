@@ -14,6 +14,8 @@
 | `tests/` | `lib/` と `hooks/` のユニットテスト。**プラグインの外に置く**（中に置くと配布物に入る） |
 | `eval-suite/evals/` | スキルの評価ケース（`claude plugin eval` 用）。**プラグインの外に置く**。結果の `results/` は Git の対象外 |
 
+文書（`README.md`、`CHANGELOG.md`、スキルの本文など）に絵文字を使わない。
+
 ## plugins を修正するとき
 
 スキルの書き方は、公式のベストプラクティスを参考にする: https://platform.claude.com/docs/ja/agents-and-tools/agent-skills/best-practices
@@ -58,7 +60,7 @@ claude plugin eval . --eval-dir eval-suite/evals --ablation none --no-publish --
 
 - スキルを足す・名前や `description` を変えたら、そのスキルのケースを足す・直して走らせる。スキルごとに「呼ばれる」ケース（`tool_used: Skill`）を 1 つ以上、必要なら回答の質を見る `llm` や `regex` の採点者を付ける。関係ない依頼で呼ばれないことを見るケース（`max: 0` と `min: 0`）も 1 つ置く。
 - 1 ケースだけ試すには `--case <名前> --runs 1`（`--case` は 1 つだけ。複数指定すると最後のものだけが使われる）。モデルは `--model haiku|sonnet|opus` で変える。Haiku・Sonnet・Opus のどれでも確かめる。
-- 全 10 ケースで、Sonnet は約 $0.5、Opus は約 $1、Haiku は数セント（1 回ずつ）。
+- 全 14 ケースで、Sonnet は約 $0.75、Opus は約 $1.5、Haiku は数セント（1 回ずつ）。
 - 呼ばれるケースの依頼は、実在しないファイルを「直して」と頼む形にしない（Claude が「ファイルが無い」と答えてスキルを呼ばない）。「これから〜する。進め方を教えて」の形にする。
 - Windows では Bash を許可するケースは動かせない。ケースの `allowed_tools` は `Read, Glob, Grep, Skill` に限る。
 - 直近の結果: Sonnet と Opus は全件通る。Haiku は説明文を強めた後も、スキルを呼ばずに自力で答えることがある（`committing-changes` `reviewing-security-boundaries` `running-regression-tests` `making-minimal-changes` `following-existing-code` で 3 回中 1〜3 回）。
