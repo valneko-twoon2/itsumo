@@ -7,7 +7,7 @@ import { join } from 'node:path';
 export const DEFAULTS = {
   // セッションとサブエージェントの開始時に差し込むページ。存在する最初のものを使う。false で無効。
   map: ['docs/architecture/README.md', 'ARCHITECTURE.md', 'docs/ARCHITECTURE.md'],
-  // 差し込むバイト数の上限。超えた分は注記付きで切る。
+  // 差し込むバイト数の上限。毎回の最初に入るので、読み切れる小ささに保つ目安。超えた分は注記付きで切る。
   mapLimit: 12000,
   // 改行は .gitattributes（`eol=lf` / `eol=crlf`）に従う。eol 属性の無いファイルには触らない。
   eol: true,
@@ -22,7 +22,7 @@ export const DEFAULTS = {
     ignore: ['node_modules/', 'dist/', 'build/', 'target/', 'coverage/', 'test-results/'],
   },
   docs: {
-    // アーキテクチャマップ: 作業の最初に読む短い案内（itsumo:docs-sync スキル）。
+    // アーキテクチャマップ: 作業の最初に読む短い案内（itsumo:syncing-docs スキル）。
     map: 'docs/architecture',
     // 設計ページ: 機能ごとに 1 枚、記述対象のコードを `covers:` に書く。
     design: 'docs/design',

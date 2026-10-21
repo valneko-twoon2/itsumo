@@ -1,4 +1,4 @@
-// リポジトリを説明する文書を、リポジトリと食い違わないよう機械で保つ（itsumo:docs-sync スキル）。フォルダは
+// リポジトリを説明する文書を、リポジトリと食い違わないよう機械で保つ（itsumo:syncing-docs スキル）。フォルダは
 // .claude/itsumo.json の `docs`（既定は docs/architecture と docs/design）で決まり、存在しないフォルダは調べない。
 //
 //   node docs-check.mjs                  マップの入口ページがトップレベルのフォルダをすべて挙げているか。マップと設計ページが

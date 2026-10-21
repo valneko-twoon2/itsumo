@@ -5,8 +5,9 @@ import { mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync }
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { pending } from './git.mjs';
+import { GIT_MAX_BUFFER, GIT_TIMEOUT_MS, pending } from './git.mjs';
 
+// 記録はセッションごとに 1 つ。数日たったセッションは再開されないので 7 日で消す。
 const KEEP_MS = 7 * 24 * 3600_000;
 
 function dir(env = process.env) {
@@ -17,18 +18,18 @@ const fileFor = (sessionId, env) => join(dir(env), `${String(sessionId).replace(
 
 /** `root` の未コミットのファイル（追跡外も 1 つずつ）と、その内容のハッシュ（消えたファイルは 'deleted'）。 */
 export function dirtyHashes(root, ignore = []) {
-  const status = execFileSync('git', ['status', '--porcelain', '--untracked-files=all'], { cwd: root, encoding: 'utf8', timeout: 15000, maxBuffer: 64 * 1024 * 1024, windowsHide: true });
+  const status = execFileSync('git', ['status', '--porcelain', '--untracked-files=all'], { cwd: root, encoding: 'utf8', timeout: GIT_TIMEOUT_MS, maxBuffer: GIT_MAX_BUFFER, windowsHide: true });
   const paths = pending(status, ignore);
   const out = {};
   if (!paths.length) return out;
-  const hashes = execFileSync('git', ['hash-object', '--stdin-paths'], { cwd: root, input: paths.join('\n'), encoding: 'utf8', timeout: 15000, maxBuffer: 64 * 1024 * 1024, windowsHide: true, stdio: ['pipe', 'pipe', 'ignore'] })
+  const hashes = execFileSync('git', ['hash-object', '--stdin-paths'], { cwd: root, input: paths.join('\n'), encoding: 'utf8', timeout: GIT_TIMEOUT_MS, maxBuffer: GIT_MAX_BUFFER, windowsHide: true, stdio: ['pipe', 'pipe', 'ignore'] })
     .split(/\r?\n/)
     .filter(Boolean);
   // hash-object は消えたファイルで止まるので、数が合わなければ 1 つずつ聞き直す。
   if (hashes.length === paths.length) paths.forEach((p, i) => (out[p] = hashes[i]));
   else for (const p of paths) {
     try {
-      out[p] = execFileSync('git', ['hash-object', '--', p], { cwd: root, encoding: 'utf8', timeout: 15000, windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+      out[p] = execFileSync('git', ['hash-object', '--', p], { cwd: root, encoding: 'utf8', timeout: GIT_TIMEOUT_MS, windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'] }).trim();
     } catch {
       out[p] = 'deleted';
     }

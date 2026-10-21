@@ -1,10 +1,10 @@
 ---
-name: worktree
+name: managing-worktrees
 description: "メインのチェックアウトに触れずに作業する Git ワークツリーを作り、終わったら安全に消す（node_modules などのリンクを先に外す）。ユーザーの dev サーバーがメインを見ているとき、サブエージェントに並行で作業させるとき、Stop フックが用済みのワークツリーを挙げたときに使う。"
 argument-hint: "add <name> / remove <path> / list"
 ---
 
-スクリプトは `node "${CLAUDE_PLUGIN_ROOT}/lib/worktree.mjs"`。設定はプロジェクトの `.claude/itsumo.json` の `worktree`:
+スクリプトは `node "${CLAUDE_PLUGIN_ROOT}/lib/worktree.mjs"`（Node.js 18 以上と Git が要る）。設定はプロジェクトの `.claude/itsumo.json` の `worktree`:
 
 ```json
 { "worktree": { "link": ["node_modules", "frontend/node_modules"], "base": "main" } }

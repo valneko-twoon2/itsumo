@@ -6,7 +6,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { loadConfig, projectRoot } from '../lib/config.mjs';
-import { eolFromCheckAttr, withEol } from '../lib/eol.mjs';
+import { BINARY_SNIFF_BYTES, eolFromCheckAttr, withEol } from '../lib/eol.mjs';
 import { git, rootHolding, worktreeRoots } from '../lib/git.mjs';
 
 function main(input) {
@@ -22,7 +22,7 @@ function main(input) {
   const want = eolFromCheckAttr(git(root, ['check-attr', 'eol', 'text', '--', rel]));
   if (!want) return;
   const bytes = readFileSync(path);
-  if (bytes.subarray(0, 8000).includes(0)) return; // バイナリ
+  if (bytes.subarray(0, BINARY_SNIFF_BYTES).includes(0)) return; // バイナリ
   const text = bytes.toString('utf8');
   const fixed = withEol(text, want);
   if (fixed !== text) writeFileSync(path, fixed);

@@ -21,7 +21,7 @@ export function reminder(input, changed, inMerge, leftover = []) {
     return [
       'ファイルを変える作業は自分のコミットで終えること。このセッションの間に変わった未コミットのファイルがある:',
       shown + more,
-      '変更に合ったチェックを走らせ（itsumo:regression スキル）、落ちたものを直し、自分のファイルだけを itsumo:commit スキルの形のメッセージでコミットしてから報告すること。',
+      '変更に合ったチェックを走らせ（itsumo:running-regression-tests スキル）、落ちたものを直し、自分のファイルだけを itsumo:committing-changes スキルの形のメッセージでコミットしてから報告すること。',
       '今コミットしてはいけない場合（ユーザーが止めた、自分のファイルではない、直せないチェックが落ちている）は、代わりに報告でそう書くこと。',
     ].join('\n');
   }

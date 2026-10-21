@@ -5,7 +5,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { badEol, withEol } from '../lib/eol.mjs';
+import { BINARY_SNIFF_BYTES, badEol, withEol } from '../lib/eol.mjs';
 import { git } from '../lib/git.mjs';
 
 function main(argv) {
@@ -26,7 +26,7 @@ function main(argv) {
   for (const b of bad) {
     const file = resolve(top, b.path);
     const bytes = readFileSync(file);
-    if (bytes.subarray(0, 8000).includes(0)) continue;
+    if (bytes.subarray(0, BINARY_SNIFF_BYTES).includes(0)) continue;
     const text = bytes.toString('utf8');
     const fixed = withEol(text, b.want);
     if (fixed !== text) {

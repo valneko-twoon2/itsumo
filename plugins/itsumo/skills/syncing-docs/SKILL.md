@@ -1,10 +1,10 @@
 ---
-name: docs-sync
+name: syncing-docs
 description: "リポジトリを説明する文書をコードと食い違わないよう保つ: 作業の最初に読む短いアーキテクチャマップ（docs/architecture/）、機能ごとの今の仕様である設計ページ（docs/design/、covers 付き）、ユーザー向けの文書（マニュアル、README）。部品の追加・移動・削除、境界や振る舞いの変更、ユーザーに見える機能の変更のとき、または文書の作り始めに使う。"
 argument-hint: "何を変えたか、または作る文書（map / design / user）"
 ---
 
-チェックは `node "${CLAUDE_PLUGIN_ROOT}/lib/docs-check.mjs"`。フォルダと上限はプロジェクトの `.claude/itsumo.json` の `docs` で変えられる（既定は `docs/architecture`、`docs/design`、入口 7000 バイト、他 14000 バイト）。itsumo の SessionStart / SubagentStart フックはマップの入口ページ（既定 `docs/architecture/README.md`）を毎回の最初に差し込むので、組み込みの Explore や Plan のサブエージェントにも届く。
+チェックは `node "${CLAUDE_PLUGIN_ROOT}/lib/docs-check.mjs"`（Node.js 18 以上と Git が要る）。フォルダと上限はプロジェクトの `.claude/itsumo.json` の `docs` で変えられる（既定は `docs/architecture`、`docs/design`、入口 7000 バイト、他 14000 バイト）。itsumo の SessionStart / SubagentStart フックはマップの入口ページ（既定 `docs/architecture/README.md`）を毎回の最初に差し込むので、組み込みの Explore や Plan のサブエージェントにも届く。
 
 ## 1. アーキテクチャマップ: 短く、正しく
 
@@ -61,7 +61,7 @@ covers:
 
 - 確かめた事実だけを書く。実環境が要る振る舞いは、コードと文言から確かめたことだけを書き、推測を書かない。読むのはユーザーなので、識別子や内部の名前を出さない。
 - 画面の部品は画面に出る言葉で呼ぶ（多言語なら各言語のカタログの言葉）。
-- 文書が多言語なら、主言語を先に書き、他の言語は同じ構造（見出し、段落、表の行数、図の順）で後から一括で訳してよい。訳していない章は分かるように残す（`/itsumo:i18n`）。
+- 文書が多言語なら、主言語を先に書き、他の言語は同じ構造（見出し、段落、表の行数、図の順）で後から一括で訳してよい。訳していない章は分かるように残す（`/itsumo:localizing-ui-text`）。
 
 ## 4. 機械の確認
 

@@ -10,7 +10,7 @@ import { existsSync, lstatSync, readdirSync, readlinkSync, rmdirSync, symlinkSyn
 import { basename, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { loadConfig } from '../lib/config.mjs';
-import { defaultBranch, finished, git, isFresh, parseWorktrees } from '../lib/git.mjs';
+import { GIT_SLOW_TIMEOUT_MS, defaultBranch, finished, git, isFresh, parseWorktrees } from '../lib/git.mjs';
 
 /** `path` がシンボリックリンクか Windows のジャンクションか（readlink はリンクにだけ答える）。 */
 export function isLink(path) {
@@ -23,7 +23,8 @@ export function isLink(path) {
   }
 }
 
-/** `dir` の中、`depth` 階層までにあるリンク。リンクはたどらない。 */
+/** `dir` の中、`depth` 階層までにあるリンク。リンクはたどらない。既定の 2 階層は、`node_modules` と `frontend/node_modules` のような、
+ * ワークツリーの直下か 1 つ下のフォルダにつなぐ典型的なリンクを拾うため。深く潜るとリンク先の巨大なツリーを歩きかねない。 */
 export function linksIn(dir, depth = 2) {
   const out = [];
   let names = [];
@@ -69,7 +70,7 @@ function main(argv) {
     if (!/^[\w.-]+$/.test(arg)) throw new Error(`名前 "${arg}": 英数字と "."、"_"、"-" だけを使うこと`);
     const from = argv.includes('--from') ? argv[argv.indexOf('--from') + 1] : base;
     const dir = resolve(mainTree, '..', `${basename(mainTree)}-wt-${arg}`);
-    git(mainTree, ['worktree', 'add', '-b', `${today()}_${arg}`, dir, from], 120000);
+    git(mainTree, ['worktree', 'add', '-b', `${today()}_${arg}`, dir, from], GIT_SLOW_TIMEOUT_MS);
     for (const rel of config.worktree.link) {
       const src = join(mainTree, rel);
       const dst = join(dir, rel);
@@ -92,7 +93,7 @@ function main(argv) {
       if (left.length) throw new Error(`${left.join(', ')} を外せなかった。何も消していない`);
       if (links.length) console.log(`リンクを ${links.length} 個外した`);
     }
-    git(mainTree, ['worktree', 'remove', '--force', dir], 120000);
+    git(mainTree, ['worktree', 'remove', '--force', dir], GIT_SLOW_TIMEOUT_MS);
     git(mainTree, ['worktree', 'prune']);
     if (tree.branch) {
       try {

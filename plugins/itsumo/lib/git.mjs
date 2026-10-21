@@ -4,7 +4,17 @@ import { execFileSync } from 'node:child_process';
 import { statSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-export const git = (cwd, args, timeout = 15000) => execFileSync('git', args, { cwd, encoding: 'utf8', timeout, maxBuffer: 64 * 1024 * 1024, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
+// ほとんどの Git コマンドは 1 秒以内に終わる。数万ファイルのリポジトリの status でも収まるよう 15 秒まで待つ。
+export const GIT_TIMEOUT_MS = 15000;
+// 数万ファイルの status や ls-files の出力が収まる大きさ（64 MiB）。
+export const GIT_MAX_BUFFER = 64 * 1024 * 1024;
+// ワークツリーの作成と削除は、チェックアウトするファイルの量しだいで遅いので 2 分まで待つ。
+export const GIT_SLOW_TIMEOUT_MS = 120000;
+// 作ってから 1 時間以内で自前のコミットが無いワークツリーは、手つかずの新品とみなして用済みにしない。
+// サブエージェントが最初のコミットをするまでの典型的な時間より長く取ってある。
+export const FRESH_WORKTREE_MS = 3600_000;
+
+export const git = (cwd, args, timeout = GIT_TIMEOUT_MS) => execFileSync('git', args, { cwd, encoding: 'utf8', timeout, maxBuffer: GIT_MAX_BUFFER, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
 
 /** `git worktree list --porcelain` の [{path, branch, prunable}]。先頭がメインのチェックアウト、detached HEAD は branch が null。 */
 export function parseWorktrees(porcelain) {
@@ -83,7 +93,7 @@ export function finished(trees, { merged, dirty, missing, fresh = () => false })
  * 自前のコミットがあってマージ済みなら、若くても終わった作業。 */
 export function isFresh(path, now = Date.now()) {
   try {
-    if (now - statSync(path).birthtimeMs >= 3600_000) return false;
+    if (now - statSync(path).birthtimeMs >= FRESH_WORKTREE_MS) return false;
     const branch = git(path, ['branch', '--show-current']).trim();
     if (!branch) return false;
     return git(path, ['reflog', 'show', '--format=%gs', `refs/heads/${branch}`]).split(/\r?\n/).filter(Boolean).length <= 1;

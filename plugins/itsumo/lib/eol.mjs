@@ -21,6 +21,9 @@ export function eolFromCheckAttr(output) {
   return values.eol === 'lf' || values.eol === 'crlf' ? values.eol : null;
 }
 
+// Git がバイナリかどうかの判定に見るのと同じ、ファイル先頭の 8000 バイト。NUL を含めばバイナリとみなして触らない。
+export const BINARY_SNIFF_BYTES = 8000;
+
 /** すべての改行（LF、CRLF、混在）を `eol` にしたテキスト。 */
 export function withEol(text, eol) {
   return text.replace(/\r?\n/g, eol === 'crlf' ? '\r\n' : '\n');
