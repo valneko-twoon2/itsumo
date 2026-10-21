@@ -81,7 +81,4 @@ Claude Code が自動で足す `Co-Authored-By: Claude ...`（コミット）と
 
 ## 開発
 
-```sh
-node --test tests/lib.test.mjs
-claude plugin validate .
-```
+テストと評価の走らせ方は、リポジトリ直下の [README.md](../../README.md) と [AGENTS.md](../../AGENTS.md)。

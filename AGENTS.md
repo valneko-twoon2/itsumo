@@ -8,6 +8,7 @@
 |---|---|
 | `.claude-plugin/marketplace.json` | マーケットプレイスの定義 |
 | `plugins/itsumo/` | プラグイン本体。ここに置いたものは利用者に配られる |
+| `README.md` | リポジトリの入口（概要、インストール、スキルとフックの一覧）。詳細は `plugins/itsumo/README.md` |
 | `CHANGELOG.md` | 変更履歴（Keep a Changelog 形式、日本語） |
 | `LICENSE` | MIT。プラグイン配布物用に `plugins/itsumo/LICENSE` にも同じものを置く |
 | `tests/` | `lib/` と `hooks/` のユニットテスト。**プラグインの外に置く**（中に置くと配布物に入る） |
