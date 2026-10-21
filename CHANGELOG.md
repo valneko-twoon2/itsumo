@@ -16,3 +16,6 @@
 - フック: マップの差し込み（SessionStart / SubagentStart）、改行コードの修正（`.gitattributes` に従う）、コミットや片付けの催促（Stop）、署名行（`Co-Authored-By: Claude`、`Generated with Claude Code`）を含むコミットと PR の阻止
 - 設定ファイル `.claude/itsumo.json` と、環境変数 `ITSUMO_DISABLE` による機能の無効化
 - ユニットテスト（`tests/`）とスキルの評価ケース（`eval-suite/evals/`）
+
+[未リリース]: https://github.com/valneko-twoon2/itsumo/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/valneko-twoon2/itsumo/releases/tag/v0.1.0
