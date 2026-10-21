@@ -40,7 +40,7 @@ claude plugin install itsumo@itsumo
 | Write / Edit の後 | 編集したファイルの改行を `.gitattributes` の `eol=` に合わせる。eol 属性の無いファイルには触らない |
 | SessionStart | 開始時の未コミットのファイルと内容を記録する（Stop で、セッション前からあったユーザーの変更を催促しないため） |
 | PreToolUse（Bash / PowerShell） | `git commit` と `gh pr create/edit` に Claude の署名行（Co-Authored-By、Generated with Claude Code）が入っていたら実行前に止め、外して出し直させる |
-| PreToolUse（Bash / PowerShell） | 取り返しのつかないコマンド（再帰的な削除、`push --force`、`reset --hard`、`clean -f`、`branch -D`、変更の破棄、`stash clear`、`DROP TABLE` など）を、実行前にユーザーへ確認させる。生成物のフォルダ（`destructive.safeDirs`）だけを消す `rm` は確認しない |
+| PreToolUse（Bash / PowerShell） | 取り返しのつかないコマンド（再帰的な削除、`push --force`、`reset --hard`、`clean -f`、`branch -D`、変更の破棄、`stash clear`、`DROP TABLE` など）と、コミットや push のチェック・署名を飛ばすフラグ（`--no-verify`、`commit -n`、`--no-gpg-sign`、`commit.gpgsign=false`）を、実行前にユーザーへ確認させる。生成物のフォルダ（`destructive.safeDirs`）だけを消す `rm` は確認しない |
 | Stop | このセッションの間に変わった未コミットのファイルがあればコミットを求める。変更が大きい（既定は 10 ファイルか 400 行を超える）ときは、`making-minimal-changes` の手順で差分の見直しも求める（1 回の停止につき 1 度だけ）。すべてコミット済みなら、用済みのワークツリーの削除を求める。マージやリベースの途中、Git の外では何もしない |
 
 フックはメインのチェックアウトとすべてのワークツリーを見る。

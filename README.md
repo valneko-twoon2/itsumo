@@ -81,7 +81,7 @@ claude plugin install itsumo@itsumo
 | セッション・サブエージェントの開始 | 依頼の言い回しとスキルの対応の短い案内を最初に差し込む。スキルの呼び忘れを減らす |
 | ファイル編集の後 | 改行コードを `.gitattributes` の `eol=` に合わせる |
 | コミット・PR の作成の前 | `Co-Authored-By: Claude` や `Generated with Claude Code` が入っていたら止める |
-| 危険なコマンドの前 | 再帰的な削除、`push --force`、`reset --hard`、`DROP TABLE` などを、実行前にあなたに確認させる |
+| 危険なコマンドの前 | 再帰的な削除、`push --force`、`reset --hard`、`DROP TABLE` などと、`--no-verify` や `--no-gpg-sign` でチェックや署名を飛ばす操作を、実行前にあなたに確認させる |
 | 作業を終えるとき | 未コミットの変更があればコミットを促す。変更が大きいときは、最小の変更の見直しも促す。用済みのワークツリーの削除も促す |
 
 > [!NOTE]

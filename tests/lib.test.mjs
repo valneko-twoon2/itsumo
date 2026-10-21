@@ -155,4 +155,14 @@ test('取り返しのつかないコマンドだけを確認に回し、生成�
   passes('Remove-Item -Recurse -Force node_modules');
   passes('rm a.txt');
   passes('git status');
+  asks('git commit --no-verify -m "x"');
+  asks('git commit -n -m x');
+  asks('git commit -an -m x');
+  asks('git push --no-verify');
+  asks('git commit --no-gpg-sign -m x');
+  asks('git -c commit.gpgsign=false commit -m x');
+  passes('git commit -m "skip --no-verify and -n handling"');
+  passes('git commit -m "fix: -n option"');
+  passes('git push -n');
+  passes('git commit -m x');
 });
