@@ -8,7 +8,7 @@ itsumo のスキル。依頼が次のどれかに当たるときは、作業を�
 - 不具合の原因を調べる、動かない・落ちる: itsumo:investigating-bugs
 - テストの扱い、動作確認、「完了しました」と報告する前: itsumo:running-regression-tests
 - テストケースの選び方、境界値: itsumo:designing-test-cases
-- API・URL・ファイルパス・プロセス起動・ログインなどの境界を足す: itsumo:reviewing-security-boundaries
+- API・エンドポイントを足す、アップロードやユーザーが渡すファイル名・パス・URL を扱う、プロセスの起動、ログイン（「確認すべき点は」「セキュリティは」とも）: itsumo:reviewing-security-boundaries
 - 削除、強制 push、reset、DB の書き換え、本番への操作: itsumo:handling-destructive-operations
 - コミットする: itsumo:committing-changes
 - PR を作る、PR の説明を書く: itsumo:writing-pr-descriptions
