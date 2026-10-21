@@ -117,3 +117,35 @@ test('署名行を含む commit / PR の作成だけを止める', async () => {
   assert.equal(hasSignature('git commit -m "Add x"'), false);
   assert.equal(hasSignature('echo Co-Authored-By: Claude'), false);
 });
+
+test('取り返しのつかないコマンドだけを確認に回し、生成物のフォルダの削除は通す', async () => {
+  const { destructiveReason } = await import('../plugins/itsumo/hooks/confirm-destructive.mjs');
+  const safe = loadConfig('/no/such/dir', {}).destructive.safeDirs;
+  const asks = (c) => assert.ok(destructiveReason(c, safe), `確認されるべき: ${c}`);
+  const passes = (c) => assert.equal(destructiveReason(c, safe), null, `通るべき: ${c}`);
+  asks('git push --force origin main');
+  asks('git push -f');
+  asks('git push origin +main');
+  asks('git reset --hard HEAD~1');
+  asks('git clean -fd');
+  asks('git branch -D feature');
+  asks('git checkout -- .');
+  asks('git restore .');
+  asks('git stash clear');
+  asks('psql -c "DROP TABLE users"');
+  asks('rm -rf src');
+  asks('rm -rf node_modules src');
+  asks('Remove-Item -Recurse -Force C:\\work\\app');
+  asks('cd app && rm -r docs');
+  passes('git push --force-with-lease');
+  passes('git push origin main');
+  passes('git reset HEAD~1');
+  passes('git branch -d feature');
+  passes('git checkout main');
+  passes('git restore --staged a.ts');
+  passes('rm -rf node_modules');
+  passes('rm -rf ./dist build/');
+  passes('Remove-Item -Recurse -Force node_modules');
+  passes('rm a.txt');
+  passes('git status');
+});

@@ -1,5 +1,5 @@
 // itsumo のプロジェクト設定: プロジェクトの `.claude/itsumo.json` を下の既定値に重ねたもの。キーはすべて省略可で、
-// ファイルが無い・壊れているときは既定値になる。環境変数 ITSUMO_DISABLE（カンマ区切り: map, eol, stop）で、
+// ファイルが無い・壊れているときは既定値になる。環境変数 ITSUMO_DISABLE（カンマ区切り: map, eol, stop, destructive）で、
 // ファイルを触らずにそのシェルだけ一部を止められる。
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -13,6 +13,12 @@ export const DEFAULTS = {
   eol: true,
   // true なら Claude の署名行（Co-Authored-By など）をコミットと PR に付けてよい。既定は付けさせない（hooks/no-attribution.mjs）。
   attribution: false,
+  destructive: {
+    // 取り返しのつかないコマンドの前にユーザーへ確認させる（hooks/confirm-destructive.mjs）。
+    confirm: true,
+    // 再帰的な rm でも、これらの名前のフォルダだけを消すなら確認しない（作り直せる生成物）。
+    safeDirs: ['node_modules', 'dist', 'build', 'target', 'coverage', 'test-results', '.next', '.turbo', '.cache', '__pycache__', '.pytest_cache'],
+  },
   stop: {
     // 未コミットの変更を残して止まろうとしたらコミットを求める。
     commit: true,
@@ -53,6 +59,7 @@ export function loadConfig(root, env = process.env) {
   const off = new Set(String(env.ITSUMO_DISABLE ?? '').split(',').map((s) => s.trim()).filter(Boolean));
   if (off.has('map')) config.map = false;
   if (off.has('eol')) config.eol = false;
+  if (off.has('destructive')) config.destructive = { ...config.destructive, confirm: false };
   if (off.has('stop')) config.stop = { ...config.stop, commit: false, worktrees: false };
   return config;
 }

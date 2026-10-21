@@ -26,6 +26,7 @@ claude plugin install itsumo@itsumo
 | `refactoring-safely` | リファクタは、先にテストで振る舞いを固め、小さな段階ごとにテストを通してコミットする。機能の変更と混ぜない |
 | `designing-test-cases` | テストケースの選び方（同値分割、境界値、条件網羅、プロパティ、状態遷移表、デシジョンテーブル、ペアワイズ） |
 | `writing-pr-descriptions` | PR の説明を、概要・背景・変更点・確認・見てほしい点の順で書く（署名行は付けない） |
+| `handling-destructive-operations` | 削除、強制 push、reset、DB の書き換え、本番への操作の前に、対象を見て、戻し方を用意し、了承を得てから実行する |
 | `reviewing-security-boundaries` | 境界（API、URL、ファイルパス、プロセス起動、外部データ、秘密情報、DB、依存）を変えるときの確認表。Web 用とデスクトップ用の表を分けて持つ |
 | `managing-worktrees` | メインに触れずに作業する Git ワークツリーを作り、リンクを先に外して安全に消す |
 | `merging-subagent-work` | サブエージェントのブランチを、報告と差分の突き合わせ・決まりの確認・マージ後の再チェック・片付けを経て取り込む |
@@ -39,6 +40,7 @@ claude plugin install itsumo@itsumo
 | Bash / PowerShell の後 | ファイルを書き換えるコマンドの後、改行が `.gitattributes` と違う変更ファイルを挙げ、直すコマンドを返す |
 | SessionStart | 開始時の未コミットのファイルと内容を記録する（Stop で、セッション前からあったユーザーの変更を催促しないため） |
 | PreToolUse（Bash / PowerShell） | `git commit` と `gh pr create/edit` に Claude の署名行（Co-Authored-By、Generated with Claude Code）が入っていたら実行前に止め、外して出し直させる |
+| PreToolUse（Bash / PowerShell） | 取り返しのつかないコマンド（再帰的な削除、`push --force`、`reset --hard`、`clean -f`、`branch -D`、変更の破棄、`stash clear`、`DROP TABLE` など）を、実行前にユーザーへ確認させる。生成物のフォルダ（`destructive.safeDirs`）だけを消す `rm` は確認しない |
 | Stop | このセッションの間に変わった未コミットのファイルがあればコミットを求める。変更が大きい（既定は 10 ファイルか 400 行を超える）ときは、`making-minimal-changes` の手順で差分の見直しも求める（1 回の停止につき 1 度だけ）。すべてコミット済みなら、用済みのワークツリーの削除を求める。マージやリベースの途中、Git の外では何もしない |
 
 フックはメインのチェックアウトとすべてのワークツリーを見る。
@@ -60,6 +62,10 @@ claude plugin install itsumo@itsumo
   "mapLimit": 12000,
   "eol": true,
   "attribution": false,
+  "destructive": {
+    "confirm": true,
+    "safeDirs": ["node_modules", "dist", "build", "target", "coverage", "test-results", ".next", ".turbo", ".cache", "__pycache__", ".pytest_cache"]
+  },
   "stop": {
     "commit": true,
     "worktrees": true,
@@ -72,9 +78,10 @@ claude plugin install itsumo@itsumo
 
 - `map: false` でマップの差し込みを止める。
 - `attribution: true` で署名行を許す（既定は止める）。
+- `destructive.confirm: false` で、取り返しのつかないコマンドの確認を止める。
 - `stop.commit: false` でコミットの催促を止める。
 - `worktree.link` に `"node_modules"` などを入れると、新しいワークツリーへメインからリンクする（Windows はジャンクション）。
-- 一時的に止めるなら環境変数 `ITSUMO_DISABLE=map,eol,stop`（カンマ区切り）。
+- 一時的に止めるなら環境変数 `ITSUMO_DISABLE=map,eol,stop,destructive`（カンマ区切り）。
 
 ## 署名行（attribution）
 

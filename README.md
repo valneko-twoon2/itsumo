@@ -10,8 +10,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-D97757)](https://code.claude.com/docs)
 [![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A5%2018-339933?logo=node.js&logoColor=white)](https://nodejs.org)
-[![Skills](https://img.shields.io/badge/skills-12-blue)](#スキル)
-[![Hooks](https://img.shields.io/badge/hooks-6-blue)](#フック)
+[![Skills](https://img.shields.io/badge/skills-13-blue)](#スキル)
+[![Hooks](https://img.shields.io/badge/hooks-7-blue)](#フック)
 
 [インストール](#インストール) ・
 [スキル](#スキル) ・
@@ -40,6 +40,7 @@
 | 原因が分からないまま、症状だけ消す修正をする | `investigating-bugs` が再現→仮説→確定の順を守らせる |
 | 「直しました」と言うが、実は動かしていない | `running-regression-tests` が実行して確かめてから報告させる |
 | 曖昧な依頼を、推測で作り込んでしまう | `clarifying-requests` が選択肢つきで聞き、答えが曖昧なら深掘りする |
+| `rm -rf` や `push --force` を、確かめずに実行する | フックが実行前にあなたへ確認し、スキルが戻し方を用意させる |
 | コミットに `Co-Authored-By: Claude` が付く | フックが実行前に止める |
 | 作業して、コミットしないまま終わる | Stop フックがコミットを促す |
 
@@ -68,6 +69,7 @@ claude plugin install itsumo@itsumo
 | `reviewing-security-boundaries` | API、URL、パス、プロセス起動などを足す | 共通の確認表に加えて、Web 用とデスクトップ用の表を持つ |
 | `committing-changes` | コミットする | 自分の変更だけをステージし、要点が先に来る短いメッセージで書く |
 | `writing-pr-descriptions` | PR を作る | 概要・背景・変更点・確認・見てほしい点の順で書く。署名行は付けない |
+| `handling-destructive-operations` | 削除、強制 push、DB の書き換えなど | 対象を見て、弱い操作で足りないか考え、戻し方を用意し、了承を得てから実行する |
 | `managing-worktrees` | 並行して作業する | メインに触れない Git ワークツリーを作り、リンクを先に外して安全に消す |
 | `merging-subagent-work` | サブエージェントの成果を取り込む | 報告と差分の突き合わせ、決まりの確認、マージ後の再チェック、片付け |
 
@@ -79,6 +81,7 @@ claude plugin install itsumo@itsumo
 | ファイル編集の後 | 改行コードを `.gitattributes` の `eol=` に合わせる |
 | シェル実行の後 | ファイルを書き換えたコマンドの後、改行コードが違うファイルを挙げる |
 | コミット・PR の作成の前 | `Co-Authored-By: Claude` や `Generated with Claude Code` が入っていたら止める |
+| 危険なコマンドの前 | 再帰的な削除、`push --force`、`reset --hard`、`DROP TABLE` などを、実行前にあなたに確認させる |
 | 作業を終えるとき | 未コミットの変更があればコミットを促す。変更が大きいときは、最小の変更の見直しも促す。用済みのワークツリーの削除も促す |
 
 > [!NOTE]
@@ -99,7 +102,7 @@ claude plugin install itsumo@itsumo
 }
 ```
 
-一時的に止めるなら、環境変数 `ITSUMO_DISABLE=map,eol,stop`。
+一時的に止めるなら、環境変数 `ITSUMO_DISABLE=map,eol,stop,destructive`。
 
 全項目、スクリプト、署名行の扱いは [plugins/itsumo/README.md](plugins/itsumo/README.md)。
 
