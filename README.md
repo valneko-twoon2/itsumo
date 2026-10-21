@@ -11,7 +11,7 @@
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-D97757)](https://code.claude.com/docs)
 [![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A5%2018-339933?logo=node.js&logoColor=white)](https://nodejs.org)
 [![Skills](https://img.shields.io/badge/skills-14-blue)](#スキル)
-[![Hooks](https://img.shields.io/badge/hooks-7-blue)](#フック)
+[![Hooks](https://img.shields.io/badge/hooks-5-blue)](#フック)
 
 [インストール](#インストール) ・
 [スキル](#スキル) ・
@@ -78,9 +78,7 @@ claude plugin install itsumo@itsumo
 
 | いつ | 何をするか |
 |---|---|
-| セッション・サブエージェントの開始 | アーキテクチャの案内ページ（`docs/architecture/README.md`、`ARCHITECTURE.md` など）があれば、最初に差し込む |
 | ファイル編集の後 | 改行コードを `.gitattributes` の `eol=` に合わせる |
-| シェル実行の後 | ファイルを書き換えたコマンドの後、改行コードが違うファイルを挙げる |
 | コミット・PR の作成の前 | `Co-Authored-By: Claude` や `Generated with Claude Code` が入っていたら止める |
 | 危険なコマンドの前 | 再帰的な削除、`push --force`、`reset --hard`、`DROP TABLE` などを、実行前にあなたに確認させる |
 | 作業を終えるとき | 未コミットの変更があればコミットを促す。変更が大きいときは、最小の変更の見直しも促す。用済みのワークツリーの削除も促す |
@@ -103,7 +101,7 @@ claude plugin install itsumo@itsumo
 }
 ```
 
-一時的に止めるなら、環境変数 `ITSUMO_DISABLE=map,eol,stop,destructive`。
+一時的に止めるなら、環境変数 `ITSUMO_DISABLE=eol,stop,destructive`。
 
 全項目、スクリプト、署名行の扱いは [plugins/itsumo/README.md](plugins/itsumo/README.md)。
 

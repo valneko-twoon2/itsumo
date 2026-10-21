@@ -4,7 +4,6 @@ import { test } from 'node:test';
 import { loadConfig } from '../plugins/itsumo/lib/config.mjs';
 import { badEol, eolFromAttr, eolFromCheckAttr, withEol } from '../plugins/itsumo/lib/eol.mjs';
 import { finished, isLarge, parseNumstat, parseWorktrees, pending, rootHolding } from '../plugins/itsumo/lib/git.mjs';
-import { rewritesFiles } from '../plugins/itsumo/hooks/eol-after-shell.mjs';
 import { reminder } from '../plugins/itsumo/hooks/stop.mjs';
 
 test('eol 属性が無いファイルには改行を求めない', () => {
@@ -40,11 +39,6 @@ test('badEol は属性と違う作業ツリーの改行だけを挙げる', () =
     { path: 'run.bat', want: 'crlf' },
     { path: 'src/c.ts', want: 'lf' },
   ]);
-});
-
-test('ファイルを書き換えるシェルコマンドだけを調べる', () => {
-  for (const c of ["sed -i 's/a/b/' x", 'echo hi > out.txt', 'Set-Content x.txt y', 'node -e "1"', 'python fix.py']) assert.equal(rewritesFiles(c), true, c);
-  for (const c of ['git status', 'ls -la', 'npm test', 'cat a 2>&1', 'a && b']) assert.equal(rewritesFiles(c), false, c);
 });
 
 test('pending は無視する前方一致を除き、名前の変更は新しい方を取る', () => {
@@ -96,9 +90,9 @@ test('大きい変更の催促には、最小の変更の見直しが添えら�
 });
 
 test('設定は既定値に重なり、ITSUMO_DISABLE で止められる', () => {
-  const c = loadConfig('/no/such/dir', { ITSUMO_DISABLE: 'map,stop' });
-  assert.equal(c.map, false);
-  assert.equal(c.eol, true);
+  const c = loadConfig('/no/such/dir', { ITSUMO_DISABLE: 'eol,stop' });
+  assert.equal(c.eol, false);
+  assert.equal(c.attribution, false);
   assert.equal(c.stop.commit, false);
   assert.ok(c.stop.ignore.includes('node_modules/'));
 });
