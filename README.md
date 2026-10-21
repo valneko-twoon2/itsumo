@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-D97757)](https://code.claude.com/docs)
 [![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A5%2018-339933?logo=node.js&logoColor=white)](https://nodejs.org)
-[![Skills](https://img.shields.io/badge/skills-13-blue)](#スキル)
+[![Skills](https://img.shields.io/badge/skills-14-blue)](#スキル)
 [![Hooks](https://img.shields.io/badge/hooks-7-blue)](#フック)
 
 [インストール](#インストール) ・
@@ -60,6 +60,7 @@ claude plugin install itsumo@itsumo
 | スキル | こんなときに使う | 何をするか |
 |---|---|---|
 | `clarifying-requests` | 「いい感じにして」のような曖昧な依頼 | 選択肢と推奨を添えて聞く。自由記述の回答がまだ曖昧なら、決まるまで深掘りする |
+| `planning-large-changes` | 複数のファイルにまたがる大きな作業 | 着手前に計画で合意を取り、各段階で全体が動く状態を保ってコミットしながら進める |
 | `making-minimal-changes` | 既存のコードを直す・変える | 依頼に必要な最小の差分だけを入れる。ついでの整形・改名・リファクタをせず、気づいた別件は報告する |
 | `following-existing-code` | 新しくコードを書く | 同じ役割の既存コードを先に読み、命名・構造・エラー処理・テスト・使う道具を合わせる |
 | `refactoring-safely` | リファクタを頼まれた | 先にテストで振る舞いを固め、小さな段階ごとにテストを通してコミットする。機能の変更と混ぜない |

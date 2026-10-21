@@ -6,7 +6,7 @@
 
 ### 追加
 
-- スキル 13 個: `committing-changes`、`running-regression-tests`、`making-minimal-changes`、`following-existing-code`、`refactoring-safely`、`investigating-bugs`、`writing-pr-descriptions`、`handling-destructive-operations`、`clarifying-requests`、`designing-test-cases`、`reviewing-security-boundaries`、`managing-worktrees`、`merging-subagent-work`
+- スキル 14 個: `committing-changes`、`running-regression-tests`、`making-minimal-changes`、`following-existing-code`、`refactoring-safely`、`investigating-bugs`、`writing-pr-descriptions`、`handling-destructive-operations`、`clarifying-requests`、`planning-large-changes`、`designing-test-cases`、`reviewing-security-boundaries`、`managing-worktrees`、`merging-subagent-work`
 - フック: マップの差し込み（SessionStart / SubagentStart）、改行コードの修正（`.gitattributes` に従う）、コミットや片付けの催促（Stop。変更が大きいときは最小の変更の見直しも）、署名行（`Co-Authored-By: Claude`、`Generated with Claude Code`）を含むコミットと PR の阻止、取り返しのつかないコマンドの実行前の確認
 - 設定ファイル `.claude/itsumo.json` と、環境変数 `ITSUMO_DISABLE` による機能の無効化
 - `LICENSE`（MIT）と `CHANGELOG.md`
