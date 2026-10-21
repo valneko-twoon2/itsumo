@@ -1,0 +1,14 @@
+{
+  "name": "itsumo",
+  "description": "いつもの定型作業をまとめたプラグイン itsumo の配布元",
+  "owner": {
+    "name": "onakasuita"
+  },
+  "plugins": [
+    {
+      "name": "itsumo",
+      "source": "./plugins/itsumo",
+      "description": "いつもの定型作業（コミット、テスト、文書、ワークツリー、サブエージェント受け入れ）をまとめたプラグイン"
+    }
+  ]
+}

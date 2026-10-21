@@ -1,0 +1,19 @@
+{
+  "name": "itsumo",
+  "version": "0.1.0",
+  "description": "いつもの定型作業: コミット作法、影響範囲のテスト、テスト設計、ミューテーションテスト、セキュリティ境界、文書の同期、多言語化、ワークツリー、サブエージェント作業の受け入れ。フックでマップ差し込み・改行修正・コミット催促",
+  "author": {
+    "name": "onakasuita"
+  },
+  "license": "MIT",
+  "keywords": [
+    "workflow",
+    "git",
+    "worktree",
+    "testing",
+    "docs",
+    "i18n",
+    "security",
+    "subagent"
+  ]
+}
